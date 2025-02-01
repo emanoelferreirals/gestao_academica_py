@@ -1,3 +1,5 @@
+# ARQUIVO SÓ DE TESTE
+
 import tkinter as tk
 import tkinter.ttk as ttk
 # import ttkbootstrap as tb 
