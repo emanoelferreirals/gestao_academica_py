@@ -2,36 +2,55 @@ import tkinter as tk
 from tkinter import messagebox
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
-from funcs import *
+from funcs import cadastrar_usuario, login_usuario
 
-def login():
-    email = campos['email']['widget'].get()
-    senha = campos['senha']['widget'].get()
-    print(f"Email: {email}, Senha: {senha}")
-    messagebox.showinfo("Aviso", f"Email: {email}, Senha: {senha}")
+def fazer_login():
+    """Função chamada ao clicar em 'Login'."""
+    email = campos['email']['widget'].get().strip()
+    senha = campos['senha']['widget'].get().strip()
 
-def cadastro():
-    nome = campos['nome']['widget'].get()
-    email = campos['email_cd']['widget'].get()
-    senha = campos['senha_cd']['widget'].get()
-    confirmar_senha = campos['conf_senha']['widget'].get()
+    if not email or not senha:
+        messagebox.showwarning("Erro", "Preencha todos os campos!")
+        return
 
-    dados = {
+    resultado = login_usuario({"email": email, "senha": senha})
+
+    if resultado is True:
+        messagebox.showinfo("Sucesso", "Login realizado com sucesso!")
+    else:
+        messagebox.showerror("Erro", resultado)
+
+def fazer_cadastro():
+    """Função chamada ao clicar em 'Cadastrar'."""
+    nome = campos['nome']['widget'].get().strip()
+    email = campos['email_cd']['widget'].get().strip()
+    senha = campos['senha_cd']['widget'].get().strip()
+    confirmar_senha = campos['conf_senha']['widget'].get().strip()
+
+    if not nome or not email or not senha or not confirmar_senha:
+        messagebox.showwarning("Erro", "Preencha todos os campos!")
+        return
+
+    if senha != confirmar_senha:
+        messagebox.showerror("Erro", "As senhas não coincidem!")
+        return
+
+    resultado = cadastrar_usuario({
         "cadastro": {
             "nome": nome,
             "email": email,
             "senha": senha
         }
-    }
+    })
 
-    print(f"Cadastro - Nome: {nome}, Email: {email}, Senha: {senha}, Confirmar Senha: {confirmar_senha}")
-
-    if cadastrar_user(dados):
-        messagebox.showinfo("Aviso", "Usuário cadastrado com sucesso!")
+    if resultado is True:
+        messagebox.showinfo("Sucesso", "Usuário cadastrado com sucesso!")
+        mostrar_tela('login')  # Voltar para tela de login
     else:
-        messagebox.showinfo("Erro", "Erro ao cadastrar")
+        messagebox.showerror("Erro", resultado)
 
 def mostrar_tela(tela):
+    """Troca entre as telas de Login e Cadastro."""
     for widget in frame.winfo_children():
         widget.grid_forget()
     
@@ -40,18 +59,16 @@ def mostrar_tela(tela):
     
     root.title(tela.replace('_', ' ').title() + " SODGA")
 
-largura_tela = 600
-altura_tela = 350
-
+# Configurações da Janela
+largura_tela, altura_tela = 600, 350
 root = tk.Tk()
 root.title("Login SODGA") 
-root.geometry(f"{largura_tela}x{altura_tela}") # 500x300
-root.resizable(False, False) # impede redimencionamento
-
+root.geometry(f"{largura_tela}x{altura_tela}")
+root.resizable(False, False)
 
 # Imagem de fundo
-fundo = Image.open("resources/img/wallpaper.png").resize((largura_tela, altura_tela)) #importa imagem
-fundo = ImageTk.PhotoImage(fundo) #abre no padrão
+fundo = Image.open("resources/img/wallpaper.png").resize((largura_tela, altura_tela))
+fundo = ImageTk.PhotoImage(fundo)
 
 lbl_fundo = tk.Label(root, image=fundo)
 lbl_fundo.place(x=0, y=0, relwidth=1, relheight=1)
@@ -59,7 +76,7 @@ lbl_fundo.place(x=0, y=0, relwidth=1, relheight=1)
 frame = ttk.Frame(root, padding=30)
 frame.grid(row=0, column=0, padx=20, pady=50)
 
-# Campos
+# Campos de entrada
 campos = {
     'email': {'widget': ttk.Entry(frame, width=25), 'row': 0, 'column': 1},
     'senha': {'widget': ttk.Entry(frame, width=25, show="*"), 'row': 1, 'column': 1},
@@ -76,7 +93,7 @@ telas = {
         'email': campos['email'],
         'lbl_senha': {'widget': ttk.Label(frame, text="Senha:"), 'row': 1, 'column': 0},
         'senha': campos['senha'],
-        'btn_login': {'widget': ttk.Button(frame, text="Login", command=login), 'row': 2, 'column': 0, 'columnspan': 2},
+        'btn_login': {'widget': ttk.Button(frame, text="Login", command=fazer_login), 'row': 2, 'column': 0, 'columnspan': 2},
         'btn_cadastro': {'widget': ttk.Button(frame, text="Criar Conta", command=lambda: mostrar_tela('cadastro')), 'row': 3, 'column': 0, 'columnspan': 2}
     },
     'cadastro': {
@@ -88,7 +105,7 @@ telas = {
         'senha_cd': campos['senha_cd'],
         'lbl_conf_senha': {'widget': ttk.Label(frame, text="Confirmar Senha:"), 'row': 3, 'column': 0},
         'conf_senha': campos['conf_senha'],
-        'btn_cadastrar': {'widget': ttk.Button(frame, text="Cadastrar", command=cadastro), 'row': 4, 'column': 1},
+        'btn_cadastrar': {'widget': ttk.Button(frame, text="Cadastrar", command=fazer_cadastro), 'row': 4, 'column': 1},
         'btn_voltar': {'widget': ttk.Button(frame, text="Voltar", command=lambda: mostrar_tela('login')), 'row': 4, 'column': 0}
     }
 }
