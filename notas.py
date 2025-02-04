@@ -55,7 +55,7 @@ btn_salvar = tk.Button(frame_botoes, text="Salvar Alterações", width=20, comma
 btn_salvar.grid(row=3, column=0, pady=10)
 
 # Cabeçalhos da tabela
-titulos = ["Matéria", "Período", "N1", "N2", "N3", "N4"]
+titulos = ["Matéria", "Período", "n1", "n2", "n3", "n4"]
 for col, titulo in enumerate(titulos):
     tk.Label(frame_conteudo_tabela, text=titulo, font=("Arial", 10, "bold"), padx=5, pady=5).grid(row=0, column=col)
 
@@ -101,30 +101,43 @@ def adicionar_linha():
 
 
 def salvar():
-    dados = {}
+    dados = []  # Lista para armazenar múltiplas linhas
 
     widgets = frame_conteudo_tabela.winfo_children()
     print(widgets)
 
     # Mapear colunas pelos títulos
-    titulos = ["Matéria", "Período", "N1", "N2", "N3", "N4"]  # Ajuste conforme sua tabela
+    titulos = ["Matéria", "Período", "n1", "n2", "n3", "n4"]  # Ajuste conforme sua tabela
 
-    # Criar um dicionário por linha
-    dados_row = {}
+    # Dicionário temporário para armazenar uma linha completa
+    dados_por_linha = {}
+
+    linha_atual = -1  # Variável para rastrear mudanças de linha
 
     for widget in widgets:
         info = widget.grid_info()
         row = info["row"]
         col = info["column"]
 
-        if col >= len(titulos):  
+        if col >= len(titulos):
             continue
 
-        coluna_nome = titulos[col]  
+        coluna_nome = titulos[col]  # Nome da coluna com base no índice
+
+        # Se mudamos de linha, salvamos a anterior e iniciamos uma nova
+        if row != linha_atual:
+            if dados_por_linha:  # Salva a linha anterior (se houver)
+                dados.append(dados_por_linha)
+            dados_por_linha = {}  # Reseta para uma nova linha
+            linha_atual = row  # Atualiza a linha atual
 
         if isinstance(widget, tk.OptionMenu):
-            var_name = widget.cget("textvariable")  
-            valor = widget.getvar(var_name).strip()  
+            var_name = widget.cget("textvariable")
+            valor = widget.getvar(var_name).strip()
+
+            if valor == "":
+                Messagebox.ok("Os campos de matéria e período não podem estar vazios!")
+                return
 
         elif isinstance(widget, tk.Entry):
             valor = widget.get().strip()
@@ -135,79 +148,21 @@ def salvar():
         # Converter valores numéricos
         if coluna_nome == "Período" or coluna_nome.startswith("N"):
             try:
-                valor = int(valor)
+                valor = valor
             except ValueError:
                 valor = 0  # Caso esteja vazio ou inválido
 
-        # Adicionar ao dicionário da linha
-        dados_row[coluna_nome] = valor
+        # Adicionar o valor ao dicionário da linha atual
+        dados_por_linha[coluna_nome] = valor
 
-        # Verificar se finalizamos uma linha completa
-        if len(dados_row) == len(titulos):
-            dados.update(dados_row)  # Atualiza a estrutura com os valores certos
-            dados_row = {}  # Reseta para a próxima linha
+    # Salvar a última linha capturada
+    if dados_por_linha:
+        dados.append(dados_por_linha)
 
-    print("Dados capturados: ", dados)
+    print("Dados capturados:", dados)
     salvar_dados(dados)
     Messagebox.ok("Alterações feitas com sucesso!", "Aviso")
-
-
-def salvar_():
-    novos_dados = []  # Lista para armazenar os dados válidos
-    linhas_widgets = {}  # Dicionário para mapear widgets por linha
-
-    # Organiza os widgets por linha
-    for widget in frame_conteudo_tabela.winfo_children():
-        info = widget.grid_info()
-        row = info["row"]
-        col = info["column"]
-        
-        if row not in linhas_widgets:
-            linhas_widgets[row] = {}
-        linhas_widgets[row][col] = widget  # Armazena os widgets em suas respectivas colunas
-
-    print(f"Linhas detectadas: {len(linhas_widgets)}")  # Depuração
-
-    for row in sorted(linhas_widgets.keys()):  # Percorre as linhas na ordem correta
-        linha = {}  # Dicionário para armazenar os dados da linha
-        
-        materia_valida = False
-        periodo_valido = False
-        
-        for col, titulo in enumerate(titulos):  # Percorre as colunas (matéria, período, notas)
-            if col in linhas_widgets[row]:  # Verifica se há um widget na coluna
-                widget = linhas_widgets[row][col]
-
-                if isinstance(widget, tk.OptionMenu):  # Se for um menu suspenso (matéria ou período)
-                    var_name = widget.cget("textvariable")  # Obtém a variável associada
-                    var = widget.nametowidget(var_name).get().strip()  # Obtém o valor real
-                    
-                    if titulo.lower() == "matéria" and var != " ":
-                        materia_valida = True
-                    if titulo.lower() == "período" and var != " ":
-                        periodo_valido = True
-                    
-                    linha[titulo.lower()] = var
-                
-                elif isinstance(widget, tk.Entry):  # Se for uma caixa de entrada (nota)
-                    linha[titulo.lower()] = widget.get().strip()
-
-        # Verifica se a matéria e o período são válidos (não vazios)
-        if materia_valida and periodo_valido:
-            novos_dados.append(linha)  # Adiciona a linha aos dados válidos
-        else:
-            # Se algum campo for vazio, exibe uma mensagem de erro
-            Messagebox.ok("Campos vazios", "Por favor, preencha os campos de matéria e período antes de salvar.")
-            return  # Interrompe a execução da função
-
-    if novos_dados:  # Se houver dados válidos para salvar
-        salvar_dados(novos_dados)  # Chama a função de salvar no "banco de dados"
-        preencher_tabela()
-    else:
-        print("Erro: Não há disciplinas válidas para salvar.")
-    
-    preencher_tabela()
-    
+   
 
 
 def preencher_tabela():
@@ -215,7 +170,7 @@ def preencher_tabela():
     dados = carregar_dados()
 
     # Ordenar os dados pelo valor do período (menor para maior)
-    dados_ordenados = sorted(dados, key=lambda x: int(x["período"]))
+    dados_ordenados = sorted(dados, key=lambda x: int(x.get("Período", 0))) 
 
     # Limpar a tabela existente
     for widget in frame_conteudo_tabela.winfo_children():
@@ -227,8 +182,8 @@ def preencher_tabela():
 
     # Preencher as linhas com os dados carregados e ordenados
     for row, dado in enumerate(dados_ordenados, start=1):
-        cmb_materia = tk.StringVar(value=dado["matéria"])
-        cmb_periodo = tk.StringVar(value=dado["período"])
+        cmb_materia = tk.StringVar(value=dado.get("Matéria", ""))
+        cmb_periodo = tk.StringVar(value=dado.get("Período", ""))
 
         menu_materia = tk.OptionMenu(frame_conteudo_tabela, cmb_materia, *materias)
         menu_materia.config(width=16)

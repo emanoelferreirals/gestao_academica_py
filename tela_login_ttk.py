@@ -5,6 +5,12 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from funcs import cadastrar_usuario, login_usuario
+import subprocess
+
+# Função para abrir a tela de notas
+def abrir_tela_notas(tela):
+    root.destroy()  # Fecha a janela atual
+    subprocess.run(["python", tela])  # Executa o outro arquivo
 
 def fazer_login():
     email = campos['email']['widget'].get().strip()
@@ -14,7 +20,8 @@ def fazer_login():
         return
     resultado = login_usuario({"email": email, "senha": senha})
     if resultado is True:
-        messagebox.showinfo("Sucesso", "Login realizado com sucesso!")
+        abrir_tela_notas("notas.py")
+        # messagebox.showinfo("Sucesso", "Login realizado com sucesso!")
     else:
         messagebox.showerror("Erro", resultado)
 
