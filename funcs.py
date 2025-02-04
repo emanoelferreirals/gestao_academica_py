@@ -1,10 +1,16 @@
 import json
 import os
 import re
+import subprocess
 
 DATABASE_PATH = "database/alunos/"
 
 """-------------------------FUNÇÕES DE LOGIN / CADASTRO -------------------------"""
+
+# Função para abrir a tela de notas
+def abrir_tela_notas(tela_atual,tela):
+    tela_atual.destroy()  # Fecha a janela atual
+    subprocess.run(["python", tela])  # Executa o outro arquivo
 
 def validar_email(email):
     """Valida se o email tem um formato correto."""
@@ -57,8 +63,6 @@ def login_usuario(credenciais):
 
 
 """--------------------------FUNÇÕES DE NOTAS -------------------------------------"""
-import json
-import os
 
 # Caminho do arquivo JSON
 ARQUIVO_DADOS = "database/alunos/aluno.json"
