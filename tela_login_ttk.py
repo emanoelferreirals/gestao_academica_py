@@ -74,7 +74,7 @@ lbl_logo = ttk.Label(root, image=logo)
 lbl_logo.grid(row=0, column=1, padx=20)
 
 # Campos de entrada
-campos = {
+campos = { 
     'email': {'widget': ttk.Entry(frame, width=25), 'row': 0, 'column': 1},
     'senha': {'widget': ttk.Entry(frame, width=25, show="*"), 'row': 1, 'column': 1},
     'nome': {'widget': ttk.Entry(frame, width=25), 'row': 0, 'column': 1},

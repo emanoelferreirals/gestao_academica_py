@@ -4,6 +4,8 @@ import re
 
 DATABASE_PATH = "database/alunos/"
 
+"""-------------------------FUNÇÕES DE LOGIN / CADASTRO -------------------------"""
+
 def validar_email(email):
     """Valida se o email tem um formato correto."""
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
@@ -52,3 +54,30 @@ def login_usuario(credenciais):
         return "Senha incorreta!"
 
     return True  # Sucesso
+
+
+"""--------------------------FUNÇÕES DE NOTAS -------------------------------------"""
+import json
+import os
+
+# Caminho do arquivo JSON
+ARQUIVO_DADOS = "database/alunos/aluno.json"
+
+# Função para carregar os dados do arquivo JSON
+def carregar_dados():
+    if os.path.exists(ARQUIVO_DADOS):  # Verifica se o arquivo existe
+        with open(ARQUIVO_DADOS, "r") as f:  # Abre o arquivo para leitura
+            try:
+                return json.load(f)  # Retorna os dados carregados
+            except json.JSONDecodeError:
+                return []  # Se houver erro na leitura, retorna uma lista vazia
+    return []  # Se o arquivo não existir, retorna uma lista vazia
+
+# Função para salvar os dados no arquivo JSON
+def salvar_dados(novos_dados):
+    # Ordena os dados pela segunda coluna (Período), garantindo que seja um número
+    novos_dados.sort(key=lambda x: int(x[1]) if x[1].isdigit() else 0)
+
+    # Escreve os dados no arquivo JSON
+    with open(ARQUIVO_DADOS, "w") as f:
+        json.dump(novos_dados, f, indent=4)  # Salva os dados com indentação para melhor legibilidade
