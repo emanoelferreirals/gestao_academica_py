@@ -4,7 +4,7 @@ from ttkbootstrap.constants import *
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
-from funcs import cadastrar_usuario, login_usuario, abrir_tela_notas
+from funcs import cadastrar_usuario, login_usuario, abrir_tela_notas, on_close
 import subprocess
 
 def fazer_login():
@@ -111,4 +111,8 @@ telas = {
 
 # Exibir a tela inicial
 mostrar_tela('login')
+
+# Vinculando a função on_close ao evento de fechar a janela
+root.protocol("WM_DELETE_WINDOW", lambda: on_close(root))  # Chamando a função on_close
+
 root.mainloop()

@@ -3,5 +3,6 @@
         "nome": "carlos",
         "email": "carlos@gmail.com",
         "senha": "1234"
-    }
+    },
+    "dados_academicos": {}
 }

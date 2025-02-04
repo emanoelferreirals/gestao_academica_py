@@ -1,6 +1,6 @@
 import ttkbootstrap as tb
 from PIL import Image, ImageTk  # Importação do Pillow
-from funcs import abrir_tela_notas
+from funcs import abrir_tela_notas, on_close
 
 # Funções para os botões
 def abrir_config(tela_atual):
@@ -79,6 +79,9 @@ def criar_janela():
         # Redimensionando os botões e aplicando a cor de fundo
         btn = tb.Button(frame_botoes, text=titulo, image=img, compound="top", bootstyle="secondary", style="my.TButton", command=lambda funcao=funcao: funcao(root))
         btn.grid(row=i//3, column=i%3, padx=20, pady=10)
+
+    # Vinculando a função on_close ao evento de fechar a janela
+    root.protocol("WM_DELETE_WINDOW", lambda: on_close(root))  # Chamando a função on_close
 
     root.mainloop()
 

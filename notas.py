@@ -1,4 +1,4 @@
-from funcs import carregar_dados, salvar_dados
+from funcs import carregar_dados, salvar_dados, on_close
 import tkinter as tk
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
@@ -207,6 +207,9 @@ adicionar_linha()
 
 # Carregar os dados e preencher a tabela ao iniciar a interface
 preencher_tabela()
+
+# Vinculando a função on_close ao evento de fechar a janela
+root.protocol("WM_DELETE_WINDOW", lambda: on_close(root))  # Chamando a função on_close
 
 # Rodando a interface
 root.mainloop()
