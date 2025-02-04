@@ -76,7 +76,7 @@ def carregar_dados():
 # Função para salvar os dados no arquivo JSON
 def salvar_dados(novos_dados):
     # Ordena os dados pela segunda coluna (Período), garantindo que seja um número
-    novos_dados.sort(key=lambda x: int(x[1]) if x[1].isdigit() else 0)
+    # novos_dados.sort(key=lambda x: int(x[1]) if x[1].isdigit() else 0)
 
     # Escreve os dados no arquivo JSON
     with open(ARQUIVO_DADOS, "w") as f:

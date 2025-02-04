@@ -2,12 +2,16 @@ from funcs import carregar_dados, salvar_dados
 import tkinter as tk
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
+from ttkbootstrap.dialogs import Messagebox  # Para mostrar a janela de aviso
+
+largura_tela = 800
+altura_tela = 500
 
 # Criando a janela principal
 style = Style(theme="minty")
 root = style.master
 root.title("Gestor de Notas")
-root.geometry("900x500")
+root.geometry(f"{largura_tela}x{altura_tela}")
 root.resizable(False, False)
 
 # Criando os frames
@@ -59,6 +63,21 @@ for col, titulo in enumerate(titulos):
 materias = ["Português", "Matemática", "Ciências", "História", "Educação Física", "Artes", "Inglês"]
 semestres = ["1", "2", "3", "4"]
 
+"""-----------------------------MOSTRAR E ESCONDER BOTAO-------------------------"""
+# Função para mostrar o botão de salvar
+def mostrar_botao_salvar():
+    btn_salvar.grid(row=3, column=0, pady=10)  # Tornar o botão visível, colocando-o no layout
+
+# Função para esconder o botão de salvar
+def esconder_botao_salvar():
+    btn_salvar.grid_forget()  # Esconde o botão removendo-o do layout
+
+
+"""-----------------------------FUNÇÕES SENSORES----------------------------------"""
+
+
+"""------------------------GERENCIAMENTO DA TABELA-----------------------------------"""
+
 # Função para adicionar uma linha à tabela
 def adicionar_linha():
     row = len(frame_conteudo_tabela.winfo_children()) // len(titulos) + 1
@@ -80,28 +99,159 @@ def adicionar_linha():
     frame_conteudo_tabela.update_idletasks()
     canvas_tabela.configure(scrollregion=canvas_tabela.bbox("all"))
 
-# Função para salvar os dados no JSON
-def salvar():
-    novos_dados = []
-    
-    for row in range(1, len(frame_conteudo_tabela.winfo_children()) // len(titulos) + 1):
-        
-        linha = []
-        for col in range(len(titulos)):
-            widget = frame_conteudo_tabela.grid_slaves(row=row, column=col)
-            if widget:
-                if isinstance(widget[0], tk.OptionMenu):  # Se for um menu suspenso
-                    var = widget[0].cget("text")  # Obtém o texto selecionado
-                    linha.append(var.strip())  # Remove espaços extras
-                elif isinstance(widget[0], tk.Entry):  # Se for uma caixa de entrada
-                    linha.append(widget[0].get().strip())  # Obtém o valor digitado
-        if linha:
-            novos_dados.append(linha)
 
-    salvar_dados(novos_dados)  # Salva os dados no JSON
+def salvar():
+    dados = {}
+
+    widgets = frame_conteudo_tabela.winfo_children()
+    print(widgets)
+
+    # Mapear colunas pelos títulos
+    titulos = ["Matéria", "Período", "N1", "N2", "N3", "N4"]  # Ajuste conforme sua tabela
+
+    # Criar um dicionário por linha
+    dados_row = {}
+
+    for widget in widgets:
+        info = widget.grid_info()
+        row = info["row"]
+        col = info["column"]
+
+        if col >= len(titulos):  
+            continue
+
+        coluna_nome = titulos[col]  
+
+        if isinstance(widget, tk.OptionMenu):
+            var_name = widget.cget("textvariable")  
+            valor = widget.getvar(var_name).strip()  
+
+        elif isinstance(widget, tk.Entry):
+            valor = widget.get().strip()
+
+        else:
+            continue
+
+        # Converter valores numéricos
+        if coluna_nome == "Período" or coluna_nome.startswith("N"):
+            try:
+                valor = int(valor)
+            except ValueError:
+                valor = 0  # Caso esteja vazio ou inválido
+
+        # Adicionar ao dicionário da linha
+        dados_row[coluna_nome] = valor
+
+        # Verificar se finalizamos uma linha completa
+        if len(dados_row) == len(titulos):
+            dados.update(dados_row)  # Atualiza a estrutura com os valores certos
+            dados_row = {}  # Reseta para a próxima linha
+
+    print("Dados capturados: ", dados)
+    salvar_dados(dados)
+    Messagebox.ok("Alterações feitas com sucesso!", "Aviso")
+
+
+def salvar_():
+    novos_dados = []  # Lista para armazenar os dados válidos
+    linhas_widgets = {}  # Dicionário para mapear widgets por linha
+
+    # Organiza os widgets por linha
+    for widget in frame_conteudo_tabela.winfo_children():
+        info = widget.grid_info()
+        row = info["row"]
+        col = info["column"]
+        
+        if row not in linhas_widgets:
+            linhas_widgets[row] = {}
+        linhas_widgets[row][col] = widget  # Armazena os widgets em suas respectivas colunas
+
+    print(f"Linhas detectadas: {len(linhas_widgets)}")  # Depuração
+
+    for row in sorted(linhas_widgets.keys()):  # Percorre as linhas na ordem correta
+        linha = {}  # Dicionário para armazenar os dados da linha
+        
+        materia_valida = False
+        periodo_valido = False
+        
+        for col, titulo in enumerate(titulos):  # Percorre as colunas (matéria, período, notas)
+            if col in linhas_widgets[row]:  # Verifica se há um widget na coluna
+                widget = linhas_widgets[row][col]
+
+                if isinstance(widget, tk.OptionMenu):  # Se for um menu suspenso (matéria ou período)
+                    var_name = widget.cget("textvariable")  # Obtém a variável associada
+                    var = widget.nametowidget(var_name).get().strip()  # Obtém o valor real
+                    
+                    if titulo.lower() == "matéria" and var != " ":
+                        materia_valida = True
+                    if titulo.lower() == "período" and var != " ":
+                        periodo_valido = True
+                    
+                    linha[titulo.lower()] = var
+                
+                elif isinstance(widget, tk.Entry):  # Se for uma caixa de entrada (nota)
+                    linha[titulo.lower()] = widget.get().strip()
+
+        # Verifica se a matéria e o período são válidos (não vazios)
+        if materia_valida and periodo_valido:
+            novos_dados.append(linha)  # Adiciona a linha aos dados válidos
+        else:
+            # Se algum campo for vazio, exibe uma mensagem de erro
+            Messagebox.ok("Campos vazios", "Por favor, preencha os campos de matéria e período antes de salvar.")
+            return  # Interrompe a execução da função
+
+    if novos_dados:  # Se houver dados válidos para salvar
+        salvar_dados(novos_dados)  # Chama a função de salvar no "banco de dados"
+        preencher_tabela()
+    else:
+        print("Erro: Não há disciplinas válidas para salvar.")
+    
+    preencher_tabela()
+    
+
+
+def preencher_tabela():
+    # Carregar os dados diretamente dentro da função
+    dados = carregar_dados()
+
+    # Ordenar os dados pelo valor do período (menor para maior)
+    dados_ordenados = sorted(dados, key=lambda x: int(x["período"]))
+
+    # Limpar a tabela existente
+    for widget in frame_conteudo_tabela.winfo_children():
+        widget.destroy()
+
+    # Recriar os cabeçalhos
+    for col, titulo in enumerate(titulos):
+        tk.Label(frame_conteudo_tabela, text=titulo, font=("Arial", 10, "bold"), padx=5, pady=5).grid(row=0, column=col)
+
+    # Preencher as linhas com os dados carregados e ordenados
+    for row, dado in enumerate(dados_ordenados, start=1):
+        cmb_materia = tk.StringVar(value=dado["matéria"])
+        cmb_periodo = tk.StringVar(value=dado["período"])
+
+        menu_materia = tk.OptionMenu(frame_conteudo_tabela, cmb_materia, *materias)
+        menu_materia.config(width=16)
+        menu_materia.grid(row=row, column=0, padx=5, pady=5)
+
+        menu_periodo = tk.OptionMenu(frame_conteudo_tabela, cmb_periodo, *semestres)
+        menu_periodo.config(width=5)
+        menu_periodo.grid(row=row, column=1, padx=5, pady=5)
+
+        for col, titulo in enumerate(titulos[2:], start=2):  # Começa a preencher as notas
+            tk.Entry(frame_conteudo_tabela, width=5, textvariable=tk.StringVar(value=dado[titulo.lower()])).grid(row=row, column=col, padx=5, pady=5)
+
+    frame_conteudo_tabela.update_idletasks()
+    canvas_tabela.configure(scrollregion=canvas_tabela.bbox("all"))
+
+# Esconder botão de salvar alterações
+mostrar_botao_salvar()
 
 # Adicionando uma linha inicial
 adicionar_linha()
+
+# Carregar os dados e preencher a tabela ao iniciar a interface
+preencher_tabela()
 
 # Rodando a interface
 root.mainloop()
