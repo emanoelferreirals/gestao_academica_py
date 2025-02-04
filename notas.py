@@ -1,3 +1,4 @@
+from funcs import carregar_dados, salvar_dados
 import tkinter as tk
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
@@ -45,6 +46,10 @@ btn_cadastrar_materia.grid(row=1, column=0, pady=10)
 btn_adicionar_linha = tk.Button(frame_botoes, text="Adicionar Linha", width=20, command=lambda: adicionar_linha())
 btn_adicionar_linha.grid(row=2, column=0, pady=10)
 
+# Botão para salvar alterações
+btn_salvar = tk.Button(frame_botoes, text="Salvar Alterações", width=20, command=lambda: salvar())
+btn_salvar.grid(row=3, column=0, pady=10)
+
 # Cabeçalhos da tabela
 titulos = ["Matéria", "Período", "N1", "N2", "N3", "N4"]
 for col, titulo in enumerate(titulos):
@@ -58,27 +63,42 @@ semestres = ["1", "2", "3", "4"]
 def adicionar_linha():
     row = len(frame_conteudo_tabela.winfo_children()) // len(titulos) + 1
 
-    # Definindo um valor padrão para exibição (pode ser um espaço vazio)
     cmb_materia = tk.StringVar(value=" ")
     cmb_periodo = tk.StringVar(value=" ")
 
-    # Criando os menus suspensos com largura fixa
     menu_materia = tk.OptionMenu(frame_conteudo_tabela, cmb_materia, *materias)
-    menu_materia.config(width=16)  # Definir um tamanho fixo
+    menu_materia.config(width=16)
     menu_materia.grid(row=row, column=0, padx=5, pady=5)
 
     menu_periodo = tk.OptionMenu(frame_conteudo_tabela, cmb_periodo, *semestres)
-    menu_periodo.config(width=5)  # Definir um tamanho fixo
+    menu_periodo.config(width=5)
     menu_periodo.grid(row=row, column=1, padx=5, pady=5)
 
-    # Campos de entrada para notas
     for col in range(2, 6):
         tk.Entry(frame_conteudo_tabela, width=5).grid(row=row, column=col, padx=5, pady=5)
 
-    # Atualiza a área rolável
     frame_conteudo_tabela.update_idletasks()
     canvas_tabela.configure(scrollregion=canvas_tabela.bbox("all"))
 
+# Função para salvar os dados no JSON
+def salvar():
+    novos_dados = []
+    
+    for row in range(1, len(frame_conteudo_tabela.winfo_children()) // len(titulos) + 1):
+        
+        linha = []
+        for col in range(len(titulos)):
+            widget = frame_conteudo_tabela.grid_slaves(row=row, column=col)
+            if widget:
+                if isinstance(widget[0], tk.OptionMenu):  # Se for um menu suspenso
+                    var = widget[0].cget("text")  # Obtém o texto selecionado
+                    linha.append(var.strip())  # Remove espaços extras
+                elif isinstance(widget[0], tk.Entry):  # Se for uma caixa de entrada
+                    linha.append(widget[0].get().strip())  # Obtém o valor digitado
+        if linha:
+            novos_dados.append(linha)
+
+    salvar_dados(novos_dados)  # Salva os dados no JSON
 
 # Adicionando uma linha inicial
 adicionar_linha()
