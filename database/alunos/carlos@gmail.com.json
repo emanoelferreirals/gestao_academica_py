@@ -4,5 +4,27 @@
         "email": "carlos@gmail.com",
         "senha": "1234"
     },
-    "dados_academicos": {}
+    "dados_academicos": [
+        {
+            "Mat\u00e9ria": "Matem\u00e1tica",
+            "Per\u00edodo": "2",
+            "n1": "",
+            "n2": "",
+            "n3": "",
+            "n4": ""
+        },
+        {
+            "Mat\u00e9ria": "Portugu\u00eas",
+            "Per\u00edodo": "1",
+            "n1": "",
+            "n2": "",
+            "n3": "",
+            "n4": ""
+        }
+    ],
+    "listas":{
+        "Periodos": ["1", "2", "3", "4"],
+        "Materias": ["Português", "Matemática", "Ciências", "História", "Educação Física", "Artes", "Inglês"],
+        "Titulos": ["Matéria", "Período", "n1", "n2", "n3", "n4"]
+    }
 }

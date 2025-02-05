@@ -1,3 +1,4 @@
+# funcs.py
 import json
 import os
 import re
@@ -5,8 +6,20 @@ import subprocess
 import tkinter as tk
 import ttkbootstrap as tb
 
+
 DATABASE_PATH = "database/alunos/"
 TEMP_LOG_PATH = "temp/log.json"
+
+def acessar_lista(name_lista):
+    aluno = ler_login()["email"]
+
+    with open(f"{DATABASE_PATH}{aluno}.json","r") as ls:
+        lista = json.load(ls)
+
+        if name_lista != "Periodos" and name_lista != "Materias": 
+            return []
+        
+        return lista["listas"][name_lista]
 
 # Função que será chamada para apagar os dados de login e fechar a janela
 def on_close(root):
@@ -91,19 +104,44 @@ def login_usuario(credenciais):
 ARQUIVO_DADOS = "database/alunos/aluno.json"
 
 def carregar_dados():
-    if os.path.exists(ARQUIVO_DADOS):
-        with open(ARQUIVO_DADOS, "r") as f:
+    login_data = ler_login()
+    if not login_data:
+        return []
+
+    email = login_data["email"]
+    caminho_arquivo = os.path.join(DATABASE_PATH, f"{email}.json")
+
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, "r") as f:
             try:
-                return json.load(f)
+                dados_usuario = json.load(f)
+                return dados_usuario.get("dados_academicos", [])
             except json.JSONDecodeError:
                 return []
     return []
 
-def salvar_dados(novos_dados):
-    with open(ARQUIVO_DADOS, "w") as f:
-        json.dump(novos_dados, f, indent=4)
 
-# Exemplo de criação de janela
+def salvar_dados(novos_dados):
+    login_data = ler_login()
+    if not login_data:
+        return
+
+    email = login_data["email"]
+    caminho_arquivo = os.path.join(DATABASE_PATH, f"{email}.json")
+
+    if os.path.exists(caminho_arquivo):
+        with open(caminho_arquivo, "r") as f:
+            dados_usuario = json.load(f)
+
+        # Atualizando os dados acadêmicos do usuário
+        dados_usuario["dados_academicos"] = novos_dados
+
+        with open(caminho_arquivo, "w") as f:
+            json.dump(dados_usuario, f, indent=4)
+
+
+
+"""# Exemplo de criação de janela
 def criar_janela():
     root = tb.Window(themename="minty")
     root.title("Menu com Imagens")
@@ -115,4 +153,4 @@ def criar_janela():
     root.mainloop()
 
 if __name__ == "__main__":
-    criar_janela()
+    criar_janela()"""

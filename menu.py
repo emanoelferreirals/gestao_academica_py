@@ -39,7 +39,7 @@ def criar_janela():
     frame_topo = tb.Frame(root, bootstyle="light")
     frame_topo.pack(fill='x')
     
-    lbl_usuario = tb.Label(frame_topo, text="Aluno Carlos", font=("Arial", 12, "bold"), bootstyle="light")
+    lbl_usuario = tb.Label(frame_topo, text="Aluno Carlos", font=("Arial", 12, "bold"), bootstyle="black")
     lbl_usuario.pack(side="left", padx=20, pady=5)
     
     icon_config = Image.open("resources/icones/config.png")  # Substitua pelo ícone correto

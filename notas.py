@@ -1,4 +1,5 @@
-from funcs import carregar_dados, salvar_dados, on_close
+# notas.py
+from funcs import carregar_dados, salvar_dados, on_close, acessar_lista
 import tkinter as tk
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
@@ -161,12 +162,12 @@ def salvar():
 
     print("Dados capturados:", dados)
     salvar_dados(dados)
+    preencher_tabela()
     Messagebox.ok("Alterações feitas com sucesso!", "Aviso")
-   
+
 
 
 def preencher_tabela():
-    # Carregar os dados diretamente dentro da função
     dados = carregar_dados()
 
     # Ordenar os dados pelo valor do período (menor para maior)
@@ -198,6 +199,7 @@ def preencher_tabela():
 
     frame_conteudo_tabela.update_idletasks()
     canvas_tabela.configure(scrollregion=canvas_tabela.bbox("all"))
+
 
 # Esconder botão de salvar alterações
 mostrar_botao_salvar()

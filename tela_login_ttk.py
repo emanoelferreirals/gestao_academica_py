@@ -60,7 +60,7 @@ root.geometry(f"{largura_tela}x{altura_tela}")
 root.resizable(False, False)
 
 # Imagem de fundo da janela
-fundo = Image.open("resources/img/fundo.png").resize((largura_tela, altura_tela))
+fundo = Image.open("resources/img/wallpaper.png").resize((largura_tela, altura_tela))
 fundo = ImageTk.PhotoImage(fundo)
 lbl_fundo = ttk.Label(root, image=fundo)
 lbl_fundo.place(x=0, y=0, relwidth=1, relheight=1)
@@ -69,11 +69,11 @@ lbl_fundo.place(x=0, y=0, relwidth=1, relheight=1)
 frame = ttk.Frame(root, padding=30)
 frame.grid(row=0, column=0, padx=20, pady=50)
 
-# Logo ao lado do frame
-logo = Image.open("resources/img/logo_if.png").resize((150, 150))
+"""# Logo ao lado do frame
+logo = Image.open("resources/img/logo_if.png").resize((100, 150))
 logo = ImageTk.PhotoImage(logo)
-lbl_logo = ttk.Label(root, image=logo)
-lbl_logo.grid(row=0, column=1, padx=20)
+lbl_logo = tk.Label(root, image=logo)
+lbl_logo.grid(row=0, column=1, padx=20)"""
 
 # Campos de entrada
 campos = { 

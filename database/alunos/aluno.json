@@ -1,42 +1,25 @@
-[
-    {
-        "Mat\u00e9ria": "Portugu\u00eas",
-        "Per\u00edodo": "1",
-        "n1": "",
-        "n2": "",
-        "n3": "",
-        "n4": ""
+{
+    "cadastro": {
+        "nome": "carlos",
+        "email": "carlos@gmail.com",
+        "senha": "1234"
     },
-    {
-        "Mat\u00e9ria": "Ingl\u00eas",
-        "Per\u00edodo": "1",
-        "n1": "",
-        "n2": "",
-        "n3": "",
-        "n4": ""
-    },
-    {
-        "Mat\u00e9ria": "Ci\u00eancias",
-        "Per\u00edodo": "2",
-        "n1": "",
-        "n2": "",
-        "n3": "",
-        "n4": ""
-    },
-    {
-        "Mat\u00e9ria": "Ci\u00eancias",
-        "Per\u00edodo": "3",
-        "n1": "",
-        "n2": "",
-        "n3": "",
-        "n4": ""
-    },
-    {
-        "Mat\u00e9ria": "Ingl\u00eas",
-        "Per\u00edodo": "4",
-        "n1": "",
-        "n2": "",
-        "n3": "",
-        "n4": ""
-    }
-]
+    "dados_academicos": [
+            {
+                "Mat\u00e9ria": "Matem\u00e1tica",
+                "Per\u00edodo": "2",
+                "n1": "",
+                "n2": "",
+                "n3": "",
+                "n4": ""
+            },
+            {
+                "Mat\u00e9ria": "Portugu\u00eas",
+                "Per\u00edodo": "1",
+                "n1": "",
+                "n2": "",
+                "n3": "",
+                "n4": ""
+            }
+    ]
+}
