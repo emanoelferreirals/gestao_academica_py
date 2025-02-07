@@ -1,25 +1,50 @@
 {
     "cadastro": {
-        "nome": "carlos",
-        "email": "carlos@gmail.com",
-        "senha": "1234"
+        "nome": "nome",
+        "email": "email",
+        "senha": "senha",
+        "id": "00000",
+        "telefone": "(00) 00000-0000",
+        "data_nascimento": "00-00-0000"
     },
-    "dados_academicos": [
+    "dados_academicos": {
+        "curso": "nome do curso",
+        "instituicao": "Instituicao",
+        "qtd_periodos": 0,
+        "notas_bimestre": true,
+        "qtd_notas_periodo": 0,
+        "carga_horaria": 0,
+        "materias": [
             {
-                "Mat\u00e9ria": "Matem\u00e1tica",
-                "Per\u00edodo": "2",
-                "n1": "",
-                "n2": "",
-                "n3": "",
-                "n4": ""
-            },
-            {
-                "Mat\u00e9ria": "Portugu\u00eas",
-                "Per\u00edodo": "1",
-                "n1": "",
-                "n2": "",
-                "n3": "",
-                "n4": ""
+                "nome": "Nome da matéria",
+                "descricao": "Descrição das matérias",
+                "periodo": "1",
+                "carga_horaria": 0,
+                "qtd_aulas": 0,
+                "duracao_aulas_min": 0,
+                "horario_aula": [
+                    {"hr_entrada": "19:00", "hr_saida": "20:30", "dia": "segunda-feira"}, {"hr_entrada": "14:00", "hr_saida": "15:30","dia": "segunda-feira"}
+                ],
+                "conteudos": ["",""]
             }
+        ]
+    },
+    "registro_notas":[
+        {
+            "Mat\u00e9ria": "Matem\u00e1tica",
+            "Per\u00edodo": "2",
+            "n1": "",
+            "n2": "",
+            "n3": "",
+            "n4": "" 
+        },
+        {
+            "Mat\u00e9ria": "Portugu\u00eas",
+            "Per\u00edodo": "1",
+            "n1": "",
+            "n2": "",
+            "n3": "",
+            "n4": ""
+        }
     ]
 }

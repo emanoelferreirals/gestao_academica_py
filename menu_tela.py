@@ -1,6 +1,6 @@
 import ttkbootstrap as tb
 from PIL import Image, ImageTk  # Importação do Pillow
-from funcs import abrir_tela_notas, on_close
+from funcs_old import abrir_nova_tela, on_close
 
 # Funções para os botões
 def abrir_config(tela_atual):
@@ -17,7 +17,7 @@ def abrir_cursos(tela_atual):
 
 def abrir_notas(tela_atual):
     print("Abrindo Notas...")
-    abrir_tela_notas(tela_atual,"notas.py")
+    abrir_nova_tela(tela_atual,"notas_tela.py")
 
 def abrir_desempenho(tela_atual):
     print("Abrindo Desempenho...")
@@ -69,9 +69,9 @@ def criar_janela():
 
     imagens = []  # Lista para armazenar referências das imagens
 
-    for i, (titulo, img_path, funcao) in enumerate(botoes):
+    for i, (titulo, img_path, funcao) in enumerate(botoes): 
         img = Image.open(img_path)  # Abre a imagem
-        img = img.resize((30, 30), Image.Resampling.LANCZOS)  # Redimensiona para 30x30 pixels
+        img = img.resize((150, 150), Image.Resampling.LANCZOS)  # Redimensiona para 30x30 pixels
         img = ImageTk.PhotoImage(img)  # Converte para formato do tkinter
 
         imagens.append(img)  # Armazena referência para evitar garbage collection

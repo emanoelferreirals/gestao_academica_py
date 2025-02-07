@@ -4,7 +4,7 @@ from ttkbootstrap.constants import *
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
-from funcs import cadastrar_usuario, login_usuario, abrir_tela_notas, on_close
+from funcs import cadastrar_usuario, login_usuario, abrir_nova_tela, on_close
 import subprocess
 
 def fazer_login():
@@ -15,7 +15,7 @@ def fazer_login():
         return
     resultado = login_usuario({"email": email, "senha": senha})
     if resultado is True:
-        abrir_tela_notas(root,"menu.py")
+        abrir_nova_tela(root,"menu_tela.py",True)
         # messagebox.showinfo("Sucesso", "Login realizado com sucesso!")
     else:
         messagebox.showerror("Erro", resultado)

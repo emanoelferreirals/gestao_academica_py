@@ -1,5 +1,5 @@
-# notas.py
-from funcs import carregar_dados, salvar_dados, on_close, acessar_lista
+# notas_tela
+from funcs import carregar_dados, salvar_dados, on_close,abrir_nova_tela, acessar_lista
 import tkinter as tk
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
@@ -42,10 +42,10 @@ canvas_tabela.create_window((0, 0), window=frame_conteudo_tabela, anchor="nw")
 canvas_tabela.configure(yscrollcommand=scrollbar_tabela.set)
 
 # Criando botões laterais
-btn_cadastrar_periodo = tk.Button(frame_botoes, text="Cadastrar Período", width=20)
-btn_cadastrar_periodo.grid(row=0, column=0, pady=10)
+btn_cadastrar_dados_academicos = tk.Button(frame_botoes, text="Cadastrar curso", width=20,command=lambda: abrir_cadastro_curso(root))
+btn_cadastrar_dados_academicos.grid(row=0, column=0, pady=10)
 
-btn_cadastrar_materia = tk.Button(frame_botoes, text="Cadastrar Matéria", width=20)
+btn_cadastrar_materia = tk.Button(frame_botoes, text="Cadastrar Matéria", width=20,command=lambda: abrir_cadastro_notas(root))
 btn_cadastrar_materia.grid(row=1, column=0, pady=10)
 
 btn_adicionar_linha = tk.Button(frame_botoes, text="Adicionar Linha", width=20, command=lambda: adicionar_linha())
@@ -78,6 +78,13 @@ def esconder_botao_salvar():
 
 
 """------------------------GERENCIAMENTO DA TABELA-----------------------------------"""
+
+def abrir_cadastro_notas(tela_atual):
+    abrir_nova_tela(tela_atual,"cadastro_materias_tela.py",False)
+
+def abrir_cadastro_curso(tela_atual):
+    abrir_nova_tela(tela_atual,"cadastro_dados_academicos_tela.py",False)
+
 
 # Função para adicionar uma linha à tabela
 def adicionar_linha():

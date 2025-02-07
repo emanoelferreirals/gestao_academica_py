@@ -4,13 +4,21 @@
         "email": "emanoel@gmail.com",
         "senha": "123"
     },
-    "dados_academicos": [
+    "registro_notas": [
         {
             "Mat\u00e9ria": "Portugu\u00eas",
             "Per\u00edodo": "1",
             "n1": "1",
             "n2": "4",
             "n3": "6",
+            "n4": "10"
+        },
+        {
+            "Mat\u00e9ria": "Ci\u00eancias",
+            "Per\u00edodo": "1",
+            "n1": "5",
+            "n2": "8",
+            "n3": "9",
             "n4": "10"
         },
         {
@@ -31,6 +39,14 @@
         },
         {
             "Mat\u00e9ria": "Matem\u00e1tica",
+            "Per\u00edodo": "3",
+            "n1": "",
+            "n2": "",
+            "n3": "",
+            "n4": ""
+        },
+        {
+            "Mat\u00e9ria": "Matem\u00e1tica",
             "Per\u00edodo": "4",
             "n1": "2",
             "n2": "4",
@@ -38,12 +54,12 @@
             "n4": "8"
         },
         {
-            "Mat\u00e9ria": "Ci\u00eancias",
-            "Per\u00edodo": "1",
-            "n1": "5",
-            "n2": "8",
-            "n3": "9",
-            "n4": "10"
+            "Mat\u00e9ria": "Artes",
+            "Per\u00edodo": "2",
+            "n1": "3",
+            "n2": "",
+            "n3": "",
+            "n4": ""
         }
     ]
 }

@@ -1,4 +1,3 @@
-# funcs.py
 import json
 import os
 import re
@@ -6,57 +5,105 @@ import subprocess
 import tkinter as tk
 import ttkbootstrap as tb
 
-
-DATABASE_PATH = "database/alunos/"
 TEMP_LOG_PATH = "temp/log.json"
-
-def acessar_lista(name_lista):
-    aluno = ler_login()["email"]
-
-    with open(f"{DATABASE_PATH}{aluno}.json","r") as ls:
-        lista = json.load(ls)
-
-        if name_lista != "Periodos" and name_lista != "Materias": 
-            return []
-        
-        return lista["listas"][name_lista]
-
-# Função que será chamada para apagar os dados de login e fechar a janela
-def on_close(root):
-    apagar_login()  # Apagar os dados de login
-    root.destroy()  # Fechar a janela
-
-# Função para salvar os dados de login
-def salvar_login(nome, email):
-    if not os.path.exists('temp'):
-        os.makedirs('temp')
-    
-    login_data = {
-        'nome': nome,
-        'email': email
-    }
-
-    with open(TEMP_LOG_PATH, 'w') as f:
-        json.dump(login_data, f)
+DATA_PATH = "data/alunos/"
 
 def ler_login():
     try:
         with open(TEMP_LOG_PATH, 'r') as f:
-            login_data = json.load(f)
-        return login_data
+            return json.load(f)
     except FileNotFoundError:
         return None
+
+def acessar_bd(oper, local, dados=None):
+    if oper == "r":
+        try:
+            with open(local, "r", encoding="UTF-8") as file:
+                return json.load(file)
+        except (FileNotFoundError, json.JSONDecodeError):
+            return {}
+    elif oper == "w" and dados is not None:
+        with open(local, "w", encoding="UTF-8") as file:
+            json.dump(dados, file, indent=4)
+        return "Sucesso"
+    return "Erro"
+
+def salvar_dados_academicos(curso, instituicao, qtd_periodos, notas_bimestre, qtd_notas_periodo, carga_horaria):
+    dados = {
+        "curso": curso,
+        "instituicao": instituicao,
+        "qtd_periodos": qtd_periodos,
+        "notas_bimestre": notas_bimestre,
+        "qtd_notas_periodo": qtd_notas_periodo,  # Corrigido o erro de digitação
+        "carga_horaria": carga_horaria,
+        "materias": []  # Garante que a estrutura base já tenha uma lista de matérias
+    }
+    
+    usuario = ler_login()["email"]
+    caminho_arquivo = os.path.join(DATA_PATH, usuario, "notas.json")
+    
+    banco = acessar_bd("r", caminho_arquivo)
+    banco["dados_academicos"] = dados  # Substitui/Cria os dados acadêmicos corretamente
+    
+    acessar_bd("w", caminho_arquivo, banco)
+    print("Dados acadêmicos salvos com sucesso!")
+
+
+def salvar_materia(nome, descricao, periodo, carga_horaria, conteudos, qtd_aulas, duracao_aulas_min, horario_aula):
+    dados = {
+        "nome": nome,
+        "descricao": descricao,
+        "periodo": periodo,
+        "carga_horaria": carga_horaria,
+        "qtd_aulas": qtd_aulas,  
+        "duracao_aulas_min": duracao_aulas_min,
+        "horario_aula": horario_aula,  # Lista de horários
+        "conteudos": conteudos  # Lista de conteúdos
+    }
+    
+    usuario = ler_login()["email"]
+    caminho_arquivo = os.path.join(DATA_PATH, usuario, "notas.json")
+    
+    banco = acessar_bd("r", caminho_arquivo)
+    
+    # Garante que "dados_academicos" existe
+    if "dados_academicos" not in banco:
+        print("Erro: Dados acadêmicos não encontrados! Cadastre-os primeiro.")
+        return
+
+    # Adiciona a matéria à lista de matérias dentro de "dados_academicos"
+    banco["dados_academicos"].setdefault("materias", []).append(dados)
+    
+    acessar_bd("w", caminho_arquivo, banco)
+    print("Matéria salva com sucesso!")
+
+
+def acessar_lista(name_lista):
+    usuario = ler_login()["email"]
+    caminho_arquivo = os.path.join(DATA_PATH, usuario, "notas.json")
+    banco = acessar_bd("r", caminho_arquivo)
+    return banco.get(name_lista, [])
+
+def on_close(root):
+    apagar_login()
+    root.destroy()
+
+def salvar_login(nome, email):
+    os.makedirs('temp', exist_ok=True)
+    login_data = {'nome': nome, 'email': email}
+    with open(TEMP_LOG_PATH, 'w') as f:
+        json.dump(login_data, f)
 
 def apagar_login():
     try:
         os.remove(TEMP_LOG_PATH)
     except FileNotFoundError:
-        pass  # Se o arquivo não existir, não faz nada
+        pass
 
-# Função para abrir a tela de notas
-def abrir_tela_notas(tela_atual, tela):
-    tela_atual.destroy()  # Fecha a janela atual
-    subprocess.run(["python", tela])  # Executa o outro arquivo
+def abrir_nova_tela(tela_atual, tela,destroy_atual):
+    if destroy_atual:
+        tela_atual.destroy()
+    subprocess.run(["python", tela])
 
 def validar_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
@@ -64,93 +111,41 @@ def validar_email(email):
 def cadastrar_usuario(dados):
     email = dados["cadastro"]["email"]
     senha = dados["cadastro"]["senha"]
-
-    if not email or not senha or not dados["cadastro"]["nome"]:
+    if not email or not senha or not dados["cadastro"].get("nome"):
         return "Preencha todos os campos!"
-
     if not validar_email(email):
         return "Email inválido!"
-
-    caminho_arquivo = os.path.join(DATABASE_PATH, f"{email}.json")
+    caminho_arquivo = os.path.join(DATA_PATH, email, "notas.json")
     if os.path.exists(caminho_arquivo):
         return "Usuário já cadastrado!"
-
-    os.makedirs(DATABASE_PATH, exist_ok=True)
-    with open(caminho_arquivo, "w") as arquivo:
-        json.dump(dados, arquivo, indent=4)
-
+    os.makedirs(os.path.join(DATA_PATH, email), exist_ok=True)
+    acessar_bd("w", caminho_arquivo, dados)
     return True
 
 def login_usuario(credenciais):
     email = credenciais["email"]
     senha = credenciais["senha"]
-
-    caminho_arquivo = os.path.join(DATABASE_PATH, f"{email}.json")
-
-    if not os.path.exists(caminho_arquivo):
+    caminho_arquivo = os.path.join(DATA_PATH, email, "notas.json")
+    banco = acessar_bd("r", caminho_arquivo)
+    if not banco:
         return "Usuário não encontrado!"
-
-    with open(caminho_arquivo, "r") as arquivo:
-        dados = json.load(arquivo)
-
-    if dados["cadastro"]["senha"] != senha:
+    if banco.get("cadastro", {}).get("senha") != senha:
         return "Senha incorreta!"
-
-    salvar_login(dados["cadastro"]["nome"], email)
-
+    salvar_login(banco["cadastro"]["nome"], email)
     return True
 
-# Função para carregar os dados do arquivo JSON
-ARQUIVO_DADOS = "database/alunos/aluno.json"
-
 def carregar_dados():
-    login_data = ler_login()
-    if not login_data:
-        return []
-
-    email = login_data["email"]
-    caminho_arquivo = os.path.join(DATABASE_PATH, f"{email}.json")
-
-    if os.path.exists(caminho_arquivo):
-        with open(caminho_arquivo, "r") as f:
-            try:
-                dados_usuario = json.load(f)
-                return dados_usuario.get("dados_academicos", [])
-            except json.JSONDecodeError:
-                return []
-    return []
-
+    usuario = ler_login()
+    if not usuario:
+        return {}
+    caminho_arquivo = os.path.join(DATA_PATH, usuario["email"], "notas.json")
+    return acessar_bd("r", caminho_arquivo).get("registro_notas", {})
 
 def salvar_dados(novos_dados):
-    login_data = ler_login()
-    if not login_data:
+    usuario = ler_login()
+    if not usuario:
         return
-
-    email = login_data["email"]
-    caminho_arquivo = os.path.join(DATABASE_PATH, f"{email}.json")
-
-    if os.path.exists(caminho_arquivo):
-        with open(caminho_arquivo, "r") as f:
-            dados_usuario = json.load(f)
-
-        # Atualizando os dados acadêmicos do usuário
-        dados_usuario["dados_academicos"] = novos_dados
-
-        with open(caminho_arquivo, "w") as f:
-            json.dump(dados_usuario, f, indent=4)
-
-
-
-"""# Exemplo de criação de janela
-def criar_janela():
-    root = tb.Window(themename="minty")
-    root.title("Menu com Imagens")
-    root.geometry("900x500")
-
-    # Definindo a função on_close para ser chamada ao fechar a janela
-    root.protocol("WM_DELETE_WINDOW", lambda: on_close(root))  # Chamando a função on_close ao fechar a janela
-
-    root.mainloop()
-
-if __name__ == "__main__":
-    criar_janela()"""
+    caminho_arquivo = os.path.join(DATA_PATH, usuario["email"], "notas.json")
+    banco = acessar_bd("r", caminho_arquivo)
+    banco["registro_notas"] = novos_dados
+    acessar_bd("w", caminho_arquivo, banco)

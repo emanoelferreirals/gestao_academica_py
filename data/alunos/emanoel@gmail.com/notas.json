@@ -1,0 +1,68 @@
+{
+    "cadastro": {
+        "nome": "Emanoel Ferreira",
+        "email": "emanoel@gmail.com",
+        "senha": "123"
+    },
+    "registro_notas": [
+        {
+            "Mat\u00e9ria": "Ci\u00eancias",
+            "Per\u00edodo": "3",
+            "n1": "",
+            "n2": "",
+            "n3": "",
+            "n4": ""
+        },
+        {
+            "Mat\u00e9ria": "Hist\u00f3ria",
+            "Per\u00edodo": "2",
+            "n1": "",
+            "n2": "",
+            "n3": "",
+            "n4": ""
+        }
+    ],
+    "dados_academicos": {
+        "curso": "curso",
+        "instituicao": "if",
+        "qtd_periodos": 6,
+        "notas_bimestre": true,
+        "qtd_notas_periodo": 5,
+        "carga_horaria": 6000,
+        "materias": [
+            {
+                "nome": "matematica",
+                "descricao": "insina a somar",
+                "periodo": "2",
+                "carga_horaria": 20,
+                "qtd_aulas": 10,
+                "duracao_aulas_min": 10,
+                "horario_aula": [],
+                "conteudos": [
+                    "geometria",
+                    "fun\u00e7\u00f5es"
+                ]
+            },
+            {
+                "nome": "curso",
+                "descricao": "ola mundo",
+                "periodo": "3",
+                "carga_horaria": 100,
+                "qtd_aulas": 10,
+                "duracao_aulas_min": 10,
+                "horario_aula": [
+                    {
+                        "dia": "segunda-feira",
+                        "hr_entrada": "10:30",
+                        "hr_saida": "11:00"
+                    }
+                ],
+                "conteudos": [
+                    "1",
+                    " oi",
+                    " ola tudo bem"
+                ]
+            }
+        ]
+    }
+}
