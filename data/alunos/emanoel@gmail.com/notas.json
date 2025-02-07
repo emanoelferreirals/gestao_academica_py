@@ -62,6 +62,76 @@
                     " oi",
                     " ola tudo bem"
                 ]
+            },
+            {
+                "nome": "linguagem",
+                "descricao": "programa\u00e7\u00e3o",
+                "periodo": "2",
+                "carga_horaria": 10,
+                "qtd_aulas": 10,
+                "duracao_aulas_min": 1,
+                "horario_aula": [
+                    {
+                        "dia": "segunda-feira",
+                        "hr_entrada": "10:00",
+                        "hr_saida": "12:00"
+                    }
+                ],
+                "conteudos": [
+                    "oi",
+                    "ola",
+                    "helo word"
+                ]
+            },
+            {
+                "nome": "linguagem",
+                "descricao": "programa\u00e7\u00e3o",
+                "periodo": "2",
+                "carga_horaria": 10,
+                "qtd_aulas": 10,
+                "duracao_aulas_min": 1,
+                "horario_aula": [
+                    {
+                        "dia": "segunda-feira",
+                        "hr_entrada": "10:00",
+                        "hr_saida": "12:00"
+                    },
+                    {
+                        "dia": "quinta-feira",
+                        "hr_entrada": "20:30",
+                        "hr_saida": "13:00"
+                    }
+                ],
+                "conteudos": [
+                    "oi",
+                    "ola",
+                    "helo word"
+                ]
+            },
+            {
+                "nome": "linguagem",
+                "descricao": "programa\u00e7\u00e3o",
+                "periodo": "2",
+                "carga_horaria": 10,
+                "qtd_aulas": 10,
+                "duracao_aulas_min": 1,
+                "horario_aula": [
+                    {
+                        "dia": "segunda-feira",
+                        "hr_entrada": "10:00",
+                        "hr_saida": "12:00"
+                    },
+                    {
+                        "dia": "sexta-feira",
+                        "hr_entrada": "13:00",
+                        "hr_saida": "12:00"
+                    }
+                ],
+                "conteudos": [
+                    "oi",
+                    "ola",
+                    "helo word"
+                ]
             }
         ]
     }

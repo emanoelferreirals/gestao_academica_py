@@ -218,7 +218,7 @@ adicionar_linha()
 preencher_tabela()
 
 # Vinculando a função on_close ao evento de fechar a janela
-root.protocol("WM_DELETE_WINDOW", lambda: on_close(root))  # Chamando a função on_close
+# root.protocol("WM_DELETE_WINDOW", lambda: on_close(root))  # Chamando a função on_close
 
 # Rodando a interface
 root.mainloop()

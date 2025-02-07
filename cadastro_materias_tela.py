@@ -1,39 +1,123 @@
 import tkinter as tk
 from tkinter import messagebox
 import ttkbootstrap as tb
-from funcs import salvar_materia  # Certifique-se de que esta função está implementada
+from funcs import salvar_materia, acessar_bd, ler_login
+import os
 
-# Lista global para armazenar os widgets de cada linha de horário
+USUARIO = ler_login()["email"]
+DATA_PATH = "data/alunos/"
+
+# Variável global para armazenar os horários (cada linha da tabela)
 horario_aula_rows = []
 
-def adicionar_linha(frame):
-    """Adiciona uma nova linha na tabela de horários de aula."""
-    # Linha 0 é o cabeçalho; a nova linha será indexada conforme o tamanho da lista + 1
+# Variável global para armazenar as matérias cadastradas
+materias_registradas = []
+
+def adicionar_linha(frame, pre_dia=None, pre_hr_entrada="", pre_hr_saida=""):
+    """
+    Adiciona uma nova linha na tabela de horários de aula.
+    Permite opcionalmente pré-preencher os valores.
+    """
     row_index = len(horario_aula_rows) + 1
-    # Lista de dias da semana
-    dias_semana = ["segunda-feira", "terça-feira", "quarta-feira", 
-                   "quinta-feira", "sexta-feira", "sábado", "domingo"]
-    
-    # Variável para o dia, com valor padrão
-    dia_var = tk.StringVar(value=dias_semana[0])
-    # Cria o OptionMenu passando os dias como argumentos posicionais
+    dias_semana = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
+    if pre_dia is None:
+        pre_dia = dias_semana[0]
+    dia_var = tk.StringVar(value=pre_dia)
+    # Corrigindo a criação do OptionMenu: passar os dias com *dias_semana
     om_dia = tb.OptionMenu(frame, dia_var, *dias_semana)
     om_dia.grid(row=row_index, column=0, padx=5, pady=2)
     
-    # Campo para horário de entrada
     entry_inicio = tb.Entry(frame, width=10)
+    entry_inicio.insert(0, pre_hr_entrada)
     entry_inicio.grid(row=row_index, column=1, padx=5, pady=2)
     
-    # Campo para horário de saída
     entry_fim = tb.Entry(frame, width=10)
+    entry_fim.insert(0, pre_hr_saida)
     entry_fim.grid(row=row_index, column=2, padx=5, pady=2)
     
-    # Armazena os widgets da linha para posterior leitura
     horario_aula_rows.append({
         "dia": dia_var,
         "hr_entrada": entry_inicio,
         "hr_saida": entry_fim
     })
+
+def limpar_tabela_horarios():
+    """Remove todas as linhas da tabela de horários."""
+    for widget in frame_horarios.winfo_children():
+        widget.destroy()
+    horario_aula_rows.clear()
+
+def carregar_materias_registradas():
+    """
+    Carrega a lista de matérias cadastradas a partir do JSON.
+    Pressupõe que os dados estejam armazenados em:
+       dados_academicos -> materias (lista de dicionários)
+    """
+    global materias_registradas
+    
+    dados = acessar_bd("r",f"{DATA_PATH}{USUARIO}/notas.json")
+    # Tenta acessar as matérias na estrutura: dados_academicos -> materias
+    if isinstance(dados, dict):
+        materias_registradas = dados.get("dados_academicos", {}).get("materias", [])
+    elif isinstance(dados, list):
+        materias_registradas = dados
+    else:
+        materias_registradas = []
+    # Retorna uma lista de nomes, com a opção de cadastrar nova matéria no início
+    opcoes = ["Cadastrar nova matéria"]
+    for materia in materias_registradas:
+        nome = materia.get("nome")
+        if nome:
+            opcoes.append(nome)
+    return opcoes
+
+def atualizar_campos_materia(*args):
+    """
+    Callback chamado quando a seleção do OptionMenu muda.
+    Se for "Cadastrar nova matéria", limpa os campos.
+    Caso contrário, preenche os campos com os dados da matéria selecionada.
+    """
+    selecionado = var_materia_selecionada.get()
+    if selecionado == "Cadastrar nova matéria":
+        # Limpa os campos de cadastro
+        entry_nome.delete(0, tk.END)
+        entry_descricao.delete(0, tk.END)
+        entry_periodo.delete(0, tk.END)
+        entry_carga_horaria.delete(0, tk.END)
+        entry_qtd_aulas.delete(0, tk.END)
+        entry_duracao.delete(0, tk.END)
+        entry_conteudos.delete(0, tk.END)
+        limpar_tabela_horarios()
+    else:
+        # Procura a matéria selecionada na lista carregada
+        materia = None
+        for m in materias_registradas:
+            if m.get("nome") == selecionado:
+                materia = m
+                break
+        if materia:
+            # Preenche os campos
+            entry_nome.delete(0, tk.END)
+            entry_nome.insert(0, materia.get("nome", ""))
+            entry_descricao.delete(0, tk.END)
+            entry_descricao.insert(0, materia.get("descricao", ""))
+            entry_periodo.delete(0, tk.END)
+            entry_periodo.insert(0, materia.get("periodo", ""))
+            entry_carga_horaria.delete(0, tk.END)
+            entry_carga_horaria.insert(0, str(materia.get("carga_horaria", "")))
+            entry_qtd_aulas.delete(0, tk.END)
+            entry_qtd_aulas.insert(0, str(materia.get("qtd_aulas", "")))
+            entry_duracao.delete(0, tk.END)
+            entry_duracao.insert(0, str(materia.get("duracao_aulas_min", "")))
+            entry_conteudos.delete(0, tk.END)
+            entry_conteudos.insert(0, ",".join(materia.get("conteudos", [])))
+            # Preenche a tabela de horários
+            limpar_tabela_horarios()
+            for horario in materia.get("horario_aula", []):
+                adicionar_linha(frame_horarios,
+                    pre_dia=horario.get("dia"),
+                    pre_hr_entrada=horario.get("hr_entrada"),
+                    pre_hr_saida=horario.get("hr_saida"))
 
 def cadastrar_materia():
     """Coleta os dados da tela e salva a disciplina, incluindo os horários de aula."""
@@ -45,7 +129,6 @@ def cadastrar_materia():
     duracao_aulas_min = entry_duracao.get()
     conteudos = entry_conteudos.get().split(",")
     
-    # Validação dos campos obrigatórios
     if not nome or not periodo:
         messagebox.showerror("Erro", "Preencha os campos obrigatórios: Nome e Período!")
         return
@@ -56,7 +139,6 @@ def cadastrar_materia():
         dia = row["dia"].get()
         hr_inicio = row["hr_entrada"].get()
         hr_fim = row["hr_saida"].get()
-        # Inclui a linha se todos os campos estiverem preenchidos
         if dia and hr_inicio and hr_fim:
             horario_aula.append({
                 "dia": dia,
@@ -83,13 +165,27 @@ def cadastrar_materia():
 # Criação da janela principal com ttkbootstrap
 root = tb.Window(themename="superhero")
 root.title("Cadastro de Matéria")
-root.geometry("1000x500")
+root.geometry("1000x600")
+
+# Frame para o OptionMenu de seleção de matéria
+frame_selecao = tb.Frame(root, padding=10)
+frame_selecao.pack(pady=10)
+
+# Carrega as matérias já cadastradas e monta a lista de opções
+opcoes_materias = carregar_materias_registradas()
+print(opcoes_materias)
+var_materia_selecionada = tk.StringVar(value=opcoes_materias[0])
+optionmenu_materia = tk.OptionMenu(frame_selecao, var_materia_selecionada, *opcoes_materias)
+optionmenu_materia.config(width=30)
+optionmenu_materia.pack()
+
+# Vincula a mudança de seleção ao callback
+var_materia_selecionada.trace("w", atualizar_campos_materia)
 
 # Frame principal para os campos da disciplina
 frame = tb.Frame(root, padding=10)
 frame.pack(pady=10)
 
-# Campos padrão para cadastro da disciplina
 tb.Label(frame, text="Nome:").grid(row=0, column=0, sticky="w")
 entry_nome = tb.Entry(frame)
 entry_nome.grid(row=0, column=1)
@@ -130,7 +226,7 @@ tb.Label(frame_horarios, text="Dia").grid(row=0, column=0, padx=5)
 tb.Label(frame_horarios, text="Hora de Entrada").grid(row=0, column=1, padx=5)
 tb.Label(frame_horarios, text="Hora de Saída").grid(row=0, column=2, padx=5)
 
-# Botão para adicionar uma nova linha de horário
+# Botão para adicionar nova linha de horário
 btn_add_horario = tb.Button(frame, text="Adicionar Horário", command=lambda: adicionar_linha(frame_horarios))
 btn_add_horario.grid(row=9, column=0, columnspan=2, pady=10)
 
