@@ -40,7 +40,7 @@ def salvar_dados_academicos(curso, instituicao, qtd_periodos, notas_bimestre, qt
     }
     
     usuario = ler_login()["email"]
-    caminho_arquivo = os.path.join( )
+    caminho_arquivo = f"{DATA_PATH}{usuario}/notas.json"
     
     banco = acessar_bd("r", caminho_arquivo)
     banco["dados_academicos"] = dados  # Substitui/Cria os dados acadêmicos corretamente

@@ -1,6 +1,6 @@
 import ttkbootstrap as tb
 from PIL import Image, ImageTk  # Importação do Pillow
-from funcs_old import abrir_nova_tela, on_close
+from funcs import abrir_nova_tela, on_close
 
 # Funções para os botões
 def abrir_config(tela_atual):
@@ -14,10 +14,12 @@ def abrir_historico(tela_atual):
 
 def abrir_cursos(tela_atual):
     print("Abrindo Meus Cursos...")
+    print("Abrindo Notas...")
+    abrir_nova_tela(tela_atual,"notas_tela.py",False)
 
 def abrir_notas(tela_atual):
     print("Abrindo Notas...")
-    abrir_nova_tela(tela_atual,"notas_tela.py")
+    abrir_nova_tela(tela_atual,"notas_tela.py",False)
 
 def abrir_desempenho(tela_atual):
     print("Abrindo Desempenho...")
