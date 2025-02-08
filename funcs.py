@@ -40,7 +40,7 @@ def salvar_dados_academicos(curso, instituicao, qtd_periodos, notas_bimestre, qt
     }
     
     usuario = ler_login()["email"]
-    caminho_arquivo = f"{DATA_PATH}{usuario}/notas.json"
+    caminho_arquivo = os.path.join(DATA_PATH, usuario, "notas.json")
     
     banco = acessar_bd("r", caminho_arquivo)
     banco["dados_academicos"] = dados  # Substitui/Cria os dados acadêmicos corretamente
@@ -48,10 +48,9 @@ def salvar_dados_academicos(curso, instituicao, qtd_periodos, notas_bimestre, qt
     acessar_bd("w", caminho_arquivo, banco)
     print("Dados acadêmicos salvos com sucesso!")
 
-
 def salvar_materia(nome, descricao, periodo, carga_horaria, conteudos, qtd_aulas, duracao_aulas_min, horario_aula):
     dados = {
-        "nome": nome,
+        "nome": nome,  # Adicionando nome na estrutura para facilitar busca
         "descricao": descricao,
         "periodo": periodo,
         "carga_horaria": carga_horaria,
@@ -66,16 +65,23 @@ def salvar_materia(nome, descricao, periodo, carga_horaria, conteudos, qtd_aulas
     
     banco = acessar_bd("r", caminho_arquivo)
     
-    # Garante que "dados_academicos" existe
-    if "dados_academicos" not in banco:
-        print("Erro: Dados acadêmicos não encontrados! Cadastre-os primeiro.")
-        return
+    # Garante que "dados_academicos" e "materias" existem
+    if not isinstance(banco, dict):
+        banco = {}
+    if "dados_academicos" not in banco or not isinstance(banco["dados_academicos"], dict):
+        banco["dados_academicos"] = {}
+    if "materias" not in banco["dados_academicos"] or not isinstance(banco["dados_academicos"]["materias"], dict):
+        banco["dados_academicos"]["materias"] = {}
 
-    # Adiciona a matéria à lista de matérias dentro de "dados_academicos"
-    banco["dados_academicos"].setdefault("materias", []).append(dados)
+    materias = banco["dados_academicos"]["materias"]
+
+    # Atualiza ou adiciona a matéria
+    materias[nome] = dados
+    
+    banco["dados_academicos"]["materias"] = materias
     
     acessar_bd("w", caminho_arquivo, banco)
-    print("Matéria salva com sucesso!")
+    print(f"Matéria '{nome}' salva com sucesso!")
 
 
 def acessar_lista(name_lista):

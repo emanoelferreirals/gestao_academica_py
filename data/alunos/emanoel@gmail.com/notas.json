@@ -31,12 +31,14 @@
         }
     ],
     "dados_academicos": {
-        "curso": "sistemas",
+        "curso": "curso",
         "instituicao": "if",
         "qtd_periodos": 6,
         "notas_bimestre": true,
         "qtd_notas_periodo": 5,
         "carga_horaria": 6000,
-        "materias": []
+        "materias": {
+            
+        }
     }
 }

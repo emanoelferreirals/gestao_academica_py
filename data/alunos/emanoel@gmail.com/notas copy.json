@@ -31,116 +31,12 @@
         }
     ],
     "dados_academicos": {
-        "curso": "curso",
+        "curso": "sistemas",
         "instituicao": "if",
         "qtd_periodos": 6,
         "notas_bimestre": true,
         "qtd_notas_periodo": 5,
         "carga_horaria": 6000,
-        "materias": [
-            {
-                "nome": "matematica",
-                "descricao": "insina a somar",
-                "periodo": "2",
-                "carga_horaria": 20,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 10,
-                "horario_aula": [],
-                "conteudos": [
-                    "geometria",
-                    "fun\u00e7\u00f5es"
-                ]
-            },
-            {
-                "nome": "curso",
-                "descricao": "ola mundo",
-                "periodo": "3",
-                "carga_horaria": 100,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 10,
-                "horario_aula": [
-                    {
-                        "dia": "segunda-feira",
-                        "hr_entrada": "10:30",
-                        "hr_saida": "11:00"
-                    }
-                ],
-                "conteudos": [
-                    "1",
-                    " oi",
-                    " ola tudo bem"
-                ]
-            },
-            {
-                "nome": "linguagem",
-                "descricao": "programa\u00e7\u00e3o",
-                "periodo": "2",
-                "carga_horaria": 10,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 1,
-                "horario_aula": [
-                    {
-                        "dia": "segunda-feira",
-                        "hr_entrada": "10:00",
-                        "hr_saida": "12:00"
-                    }
-                ],
-                "conteudos": [
-                    "oi",
-                    "ola",
-                    "helo word"
-                ]
-            },
-            {
-                "nome": "linguagem",
-                "descricao": "programa\u00e7\u00e3o",
-                "periodo": "2",
-                "carga_horaria": 10,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 1,
-                "horario_aula": [
-                    {
-                        "dia": "segunda-feira",
-                        "hr_entrada": "10:00",
-                        "hr_saida": "12:00"
-                    },
-                    {
-                        "dia": "quinta-feira",
-                        "hr_entrada": "20:30",
-                        "hr_saida": "13:00"
-                    }
-                ],
-                "conteudos": [
-                    "oi",
-                    "ola",
-                    "helo word"
-                ]
-            },
-            {
-                "nome": "linguagem",
-                "descricao": "programa\u00e7\u00e3o",
-                "periodo": "2",
-                "carga_horaria": 10,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 1,
-                "horario_aula": [
-                    {
-                        "dia": "segunda-feira",
-                        "hr_entrada": "10:00",
-                        "hr_saida": "12:00"
-                    },
-                    {
-                        "dia": "sexta-feira",
-                        "hr_entrada": "13:00",
-                        "hr_saida": "12:00"
-                    }
-                ],
-                "conteudos": [
-                    "oi",
-                    "ola",
-                    "helo word"
-                ]
-            }
-        ]
+        "materias": []
     }
 }
