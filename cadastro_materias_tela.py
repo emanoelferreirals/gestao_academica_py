@@ -52,15 +52,39 @@ def carregar_materias_registradas():
         materias_registradas = {}
 
     opcoes = ["Cadastrar nova matéria"]
-    for nome in materias_registradas.keys():
-        opcoes.append(nome)
+    for id_materia, dados_materia in materias_registradas.items():
+        opcoes.append(dados_materia["nome"])  # Agora adiciona o nome da matéria corretamente
     return opcoes
 
+def atualizar_lista_materias():
+    """ Atualiza as opções do OptionMenu garantindo que cada matéria tenha um identificador único. """
+    global materias_opcoes  # Dicionário para mapear nomes ao ID real
+    materias_opcoes = {"Cadastrar nova matéria": None}
+    
+    for id_materia, dados in materias_registradas.items():
+        nome_exibido = f"{dados['nome']} ({id_materia})"
+        materias_opcoes[nome_exibido] = id_materia
+    
+    opcoes_materias = list(materias_opcoes.keys())
+    
+    # Atualizar o OptionMenu
+    menu_materias["menu"].delete(0, "end")  # Limpar menu antigo
+    
+    for opcao in opcoes_materias:
+        menu_materias["menu"].add_command(label=opcao, command=tk._setit(var_materia_selecionada, opcao, atualizar_campos_materia))
+    
+    var_materia_selecionada.set(opcoes_materias[0])  # Resetar para a primeira opção
 
 def atualizar_campos_materia(*args):
-    """ Atualiza os campos ao selecionar uma matéria. """
+    """ Atualiza os campos ao selecionar uma matéria pelo OptionMenu. """
     selecionado = var_materia_selecionada.get()
-    if selecionado == "Cadastrar nova matéria":
+    id_materia = materias_opcoes.get(selecionado)  # Pega o ID real da matéria
+    
+    if id_materia is None:  # Caso seja "Cadastrar nova matéria"
+        entry_id.config(state="normal")
+        entry_id.delete(0, tk.END)
+        entry_id.config(state="disabled")
+
         entry_nome.delete(0, tk.END)
         entry_descricao.delete(0, tk.END)
         entry_periodo.delete(0, tk.END)
@@ -70,10 +94,15 @@ def atualizar_campos_materia(*args):
         entry_conteudos.delete(0, tk.END)
         limpar_tabela_horarios()
     else:
-        materia = materias_registradas.get(selecionado, {})
-        
+        materia = materias_registradas[id_materia]
+
+        entry_id.config(state="normal")
+        entry_id.delete(0, tk.END)
+        entry_id.insert(0, str(id_materia))  # Definindo ID real
+        entry_id.config(state="disabled")
+
         entry_nome.delete(0, tk.END)
-        entry_nome.insert(0, selecionado)
+        entry_nome.insert(0, materia.get("nome", ""))
         entry_descricao.delete(0, tk.END)
         entry_descricao.insert(0, materia.get("descricao", ""))
         entry_periodo.delete(0, tk.END)
@@ -86,10 +115,10 @@ def atualizar_campos_materia(*args):
         entry_duracao.insert(0, str(materia.get("duracao_aulas_min", "")))
         entry_conteudos.delete(0, tk.END)
         entry_conteudos.insert(0, ",".join(materia.get("conteudos", [])))
+
         limpar_tabela_horarios()
         for horario in materia.get("horario_aula", []):
             adicionar_linha(frame_horarios, pre_dia=horario.get("dia"), pre_hr_entrada=horario.get("hr_entrada"), pre_hr_saida=horario.get("hr_saida"))
-
 
 def cadastrar_materia():
     """ Salva a matéria no banco de dados. """
@@ -100,11 +129,12 @@ def cadastrar_materia():
     qtd_aulas = entry_qtd_aulas.get()
     duracao_aulas_min = entry_duracao.get()
     conteudos = entry_conteudos.get().split(",")
-    
+    materia_id = entry_id.get()
+
     if not nome or not periodo:
         messagebox.showerror("Erro", "Preencha os campos obrigatórios: Nome e Período!")
         return
-    
+
     horario_aula = []
     for row in horario_aula_rows:
         dia = row["dia"].get()
@@ -112,13 +142,20 @@ def cadastrar_materia():
         hr_fim = row["hr_saida"].get()
         if dia and hr_inicio and hr_fim:
             horario_aula.append({"dia": dia, "hr_entrada": hr_inicio, "hr_saida": hr_fim})
-    
+
+    # Obtendo o ID armazenado no entry_id
+    entry_id.config(state="normal")
+    materia_id = entry_id.get()
+    entry_id.config(state="disabled")
+
     try:
-        salvar_materia(nome, descricao, periodo, int(carga_horaria), conteudos, int(qtd_aulas), int(duracao_aulas_min), horario_aula)
+        salvar_materia(nome, descricao, periodo, int(carga_horaria), conteudos, int(qtd_aulas), int(duracao_aulas_min), horario_aula, materia_id)
         messagebox.showinfo("Sucesso", "Matéria cadastrada com sucesso!")
-        root.destroy()
+        
+        # root.destroy()
     except Exception as e:
         messagebox.showerror("Erro", f"Erro ao salvar matéria: {e}")
+
 
 root = tb.Window(themename="superhero")
 root.title("Cadastro de Matéria")
@@ -128,10 +165,13 @@ frame_selecao = tb.Frame(root, padding=10)
 frame_selecao.pack(pady=10)
 
 opcoes_materias = carregar_materias_registradas()
-var_materia_selecionada = tk.StringVar(value=opcoes_materias[0])
-optionmenu_materia = tb.OptionMenu(frame_selecao, var_materia_selecionada, *opcoes_materias)
-optionmenu_materia.pack()
-var_materia_selecionada.trace("w", atualizar_campos_materia)
+# Criar OptionMenu corretamente
+var_materia_selecionada = tk.StringVar()
+var_materia_selecionada.set("Cadastrar nova matéria")  # Padrão
+menu_materias = tk.OptionMenu(root, var_materia_selecionada, "Cadastrar nova matéria")
+menu_materias.pack()
+# Atualizar a lista ao iniciar
+atualizar_lista_materias()
 
 
 frame = tb.Frame(root, padding=10)
@@ -166,6 +206,10 @@ tb.Label(frame, text="Conteúdos:").grid(row=6, column=0, padx=5, pady=5, sticky
 entry_conteudos = tb.Entry(frame, width=40)
 entry_conteudos.grid(row=6, column=1, padx=5, pady=5)
 
+# Criando o campo entry_id invisível
+entry_id = tb.Entry(root)
+entry_id.config(state="disabled")
+entry_id.pack_forget()
 
 frame_horarios = tb.Frame(frame, padding=5)
 frame_horarios.grid(row=8, column=0, columnspan=2)
