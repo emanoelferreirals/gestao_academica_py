@@ -58,7 +58,7 @@
                 ]
             },
             "2": {
-                "nome": "Linguagem de programação",
+                "nome": "Linguagem de programaçãooooo",
                 "descricao": "python",
                 "periodo": "2",
                 "carga_horaria": 100,
@@ -70,68 +70,6 @@
                         "hr_entrada": "19:00",
                         "hr_saida": "20:00"
                     },
-                    {
-                        "dia": "quinta-feira",
-                        "hr_entrada": "19:00",
-                        "hr_saida": "20:00"
-                    }
-                ],
-                "conteudos": [
-                    "python",
-                    " tkinter"
-                ]
-            },
-            "3": {
-                "nome": "Linguagem 23",
-                "descricao": "python",
-                "periodo": "2",
-                "carga_horaria": 100,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 10,
-                "horario_aula": [
-                    {
-                        "dia": "segunda-feira",
-                        "hr_entrada": "19:00",
-                        "hr_saida": "20:00"
-                    }
-                ],
-                "conteudos": [
-                    "python",
-                    " tkinter"
-                ]
-            },
-            "4": {
-                "nome": "Linguagem",
-                "descricao": "python",
-                "periodo": "6",
-                "carga_horaria": 100,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 10,
-                "horario_aula": [
-                    {
-                        "dia": "segunda-feira",
-                        "hr_entrada": "19:00",
-                        "hr_saida": "20:00"
-                    },
-                    {
-                        "dia": "segunda-feira",
-                        "hr_entrada": "10",
-                        "hr_saida": "10"
-                    }
-                ],
-                "conteudos": [
-                    "python",
-                    " tkinter"
-                ]
-            },
-            "5": {
-                "nome": "4",
-                "descricao": "python",
-                "periodo": "10",
-                "carga_horaria": 1000,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 10,
-                "horario_aula": [
                     {
                         "dia": "segunda-feira",
                         "hr_entrada": "19:00",
@@ -144,15 +82,15 @@
                 ]
             },
             "": {
-                "nome": "pythonnnnnnn",
-                "descricao": "nnn",
-                "periodo": "1",
-                "carga_horaria": 1,
-                "qtd_aulas": 1,
-                "duracao_aulas_min": 1,
+                "nome": "Python",
+                "descricao": "Alguma coisa",
+                "periodo": "7",
+                "carga_horaria": 8,
+                "qtd_aulas": 8,
+                "duracao_aulas_min": 8,
                 "horario_aula": [],
                 "conteudos": [
-                    "1"
+                    "jk"
                 ]
             }
         }

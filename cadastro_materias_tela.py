@@ -41,6 +41,33 @@ def limpar_tabela_horarios():
         widget.destroy()
     horario_aula_rows.clear()
 
+def excluir_materia():
+    """ Exclui a matéria selecionada do banco de dados. """
+    selecionado = var_materia_selecionada.get()
+    id_materia = materias_opcoes.get(selecionado)  # Obtém o ID real da matéria
+    
+    if id_materia is None:
+        messagebox.showerror("Erro", "Selecione uma matéria válida para excluir!")
+        return
+    
+    resposta = messagebox.askyesno("Confirmação", f"Tem certeza que deseja excluir a matéria '{selecionado}'?")
+    if not resposta:
+        return
+
+    # Acessa os dados e remove a matéria
+    dados = acessar_bd("r", f"{DATA_PATH}{USUARIO}/notas.json")
+    if isinstance(dados, dict) and "dados_academicos" in dados:
+        if id_materia in dados["dados_academicos"]["materias"]:
+            del dados["dados_academicos"]["materias"][id_materia]
+            acessar_bd("w", f"{DATA_PATH}{USUARIO}/notas.json", dados)  # Salva a alteração
+            messagebox.showinfo("Sucesso", "Matéria excluída com sucesso!")
+            atualizar_lista_materias()
+        else:
+            messagebox.showerror("Erro", "Matéria não encontrada!")
+    else:
+        messagebox.showerror("Erro", "Erro ao acessar o banco de dados!")
+
+
 def carregar_materias_registradas():
     """ Carrega a lista de matérias cadastradas. """
     global materias_registradas
@@ -78,9 +105,12 @@ def atualizar_lista_materias():
 def atualizar_campos_materia(*args):
     """ Atualiza os campos ao selecionar uma matéria pelo OptionMenu. """
     selecionado = var_materia_selecionada.get()
-    id_materia = materias_opcoes.get(selecionado)  # Pega o ID real da matéria
-    
-    if id_materia is None:  # Caso seja "Cadastrar nova matéria"
+    id_materia = materias_opcoes.get(selecionado)
+
+    if id_materia is None:  # "Cadastrar nova matéria"
+        btn_excluir.grid_remove()  # Esconde o botão
+        
+        # Limpa os campos
         entry_id.config(state="normal")
         entry_id.delete(0, tk.END)
         entry_id.config(state="disabled")
@@ -94,6 +124,8 @@ def atualizar_campos_materia(*args):
         entry_conteudos.delete(0, tk.END)
         limpar_tabela_horarios()
     else:
+        btn_excluir.grid()  # Mostra o botão de excluir
+        
         materia = materias_registradas[id_materia]
 
         entry_id.config(state="normal")
@@ -119,6 +151,7 @@ def atualizar_campos_materia(*args):
         limpar_tabela_horarios()
         for horario in materia.get("horario_aula", []):
             adicionar_linha(frame_horarios, pre_dia=horario.get("dia"), pre_hr_entrada=horario.get("hr_entrada"), pre_hr_saida=horario.get("hr_saida"))
+
 
 def cadastrar_materia():
     """ Salva a matéria no banco de dados. """
@@ -151,6 +184,8 @@ def cadastrar_materia():
     try:
         salvar_materia(nome, descricao, periodo, int(carga_horaria), conteudos, int(qtd_aulas), int(duracao_aulas_min), horario_aula, materia_id)
         messagebox.showinfo("Sucesso", "Matéria cadastrada com sucesso!")
+        atualizar_campos_materia()
+        atualizar_lista_materias()
         
         # root.destroy()
     except Exception as e:
@@ -172,7 +207,6 @@ menu_materias = tk.OptionMenu(root, var_materia_selecionada, "Cadastrar nova mat
 menu_materias.pack()
 # Atualizar a lista ao iniciar
 atualizar_lista_materias()
-
 
 frame = tb.Frame(root, padding=10)
 frame.pack(pady=10)
@@ -220,6 +254,8 @@ btn_add_horario.grid(row=9, column=0, columnspan=2, pady=10)
 btn_salvar = tb.Button(frame, text="Salvar Matéria", command=cadastrar_materia)
 btn_salvar.grid(row=10, column=0, columnspan=2, pady=10)
 
-
+btn_excluir = tb.Button(frame, text="Excluir Matéria", command=excluir_materia)
+btn_excluir.grid(row=11, column=0, columnspan=2, pady=10)
+btn_excluir.grid_remove()  # Esconde o botão por padrão
 
 root.mainloop()
