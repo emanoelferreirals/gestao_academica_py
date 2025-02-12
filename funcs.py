@@ -59,9 +59,9 @@ def salvar_materia(nome, descricao, periodo, carga_horaria, conteudos, qtd_aulas
     print("keysss:", materias.keys())
     
     # Verifica se a matéria já existe pelo id, Se a matéria for nova, cria um novo ID
-    if materia_id == None or materia_id == "":
+    if not materia_id:  
         materia_id = str(gerar_novo_id(materias))
-    print("idddddd:  ", materia_id)
+
     
     # Salva/atualiza os dados da matéria
     materias[materia_id] = {

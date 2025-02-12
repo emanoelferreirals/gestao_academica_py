@@ -109,6 +109,18 @@
                 "conteudos": [
                     "iiiiiiiiiiiiii"
                 ]
+            },
+            "5": {
+                "nome": "jnsjnjk",
+                "descricao": "0",
+                "periodo": "0",
+                "carga_horaria": 0,
+                "qtd_aulas": 0,
+                "duracao_aulas_min": 0,
+                "horario_aula": [],
+                "conteudos": [
+                    ""
+                ]
             }
         }
     }
