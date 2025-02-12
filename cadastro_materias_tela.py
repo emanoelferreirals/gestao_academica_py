@@ -11,6 +11,26 @@ DATA_PATH = "data/alunos/"
 horario_aula_rows = []  # Armazena os horários cadastrados
 materias_registradas = []  # Armazena as matérias existentes
 
+def limpar_campos():
+    """ Limpa todos os campos do formulário e a tabela de horários. """
+    # Limpar os campos de entrada
+    entry_nome.delete(0, tk.END)
+    entry_descricao.delete(0, tk.END)
+    entry_periodo.delete(0, tk.END)
+    entry_carga_horaria.delete(0, tk.END)
+    entry_qtd_aulas.delete(0, tk.END)
+    entry_duracao.delete(0, tk.END)
+    entry_conteudos.delete(0, tk.END)
+
+    # Desbloquear e limpar o campo de ID
+    entry_id.config(state="normal")
+    entry_id.delete(0, tk.END)
+    entry_id.config(state="disabled")
+
+    # Limpar tabela de horários
+    limpar_tabela_horarios()
+
+
 def adicionar_linha(frame, pre_dia=None, pre_hr_entrada="", pre_hr_saida=""):
     """ Adiciona uma nova linha na tabela de horários de aula. """
     row_index = len(horario_aula_rows) + 1
@@ -44,7 +64,7 @@ def limpar_tabela_horarios():
 def excluir_materia():
     """ Exclui a matéria selecionada do banco de dados. """
     selecionado = var_materia_selecionada.get()
-    id_materia = materias_opcoes.get(selecionado)  # Obtém o ID real da matéria
+    id_materia = materias_opcoes.get(selecionado)  
     
     if id_materia is None:
         messagebox.showerror("Erro", "Selecione uma matéria válida para excluir!")
@@ -54,14 +74,17 @@ def excluir_materia():
     if not resposta:
         return
 
-    # Acessa os dados e remove a matéria
     dados = acessar_bd("r", f"{DATA_PATH}{USUARIO}/notas.json")
     if isinstance(dados, dict) and "dados_academicos" in dados:
         if id_materia in dados["dados_academicos"]["materias"]:
             del dados["dados_academicos"]["materias"][id_materia]
-            acessar_bd("w", f"{DATA_PATH}{USUARIO}/notas.json", dados)  # Salva a alteração
+            acessar_bd("w", f"{DATA_PATH}{USUARIO}/notas.json", dados)
             messagebox.showinfo("Sucesso", "Matéria excluída com sucesso!")
+            
+            # Atualiza lista, limpa campos e redefine tabela
+            carregar_materias_registradas()
             atualizar_lista_materias()
+            limpar_campos()
         else:
             messagebox.showerror("Erro", "Matéria não encontrada!")
     else:
@@ -78,9 +101,12 @@ def carregar_materias_registradas():
     else:
         materias_registradas = {}
 
+    print("materias_registradas: ",materias_registradas)
+
     opcoes = ["Cadastrar nova matéria"]
     for id_materia, dados_materia in materias_registradas.items():
         opcoes.append(dados_materia["nome"])  # Agora adiciona o nome da matéria corretamente
+        print("Opções: ",opcoes)
     return opcoes
 
 def atualizar_lista_materias():
@@ -103,7 +129,7 @@ def atualizar_lista_materias():
     var_materia_selecionada.set(opcoes_materias[0])  # Resetar para a primeira opção
 
 def atualizar_campos_materia(*args):
-    """ Atualiza os campos ao selecionar uma matéria pelo OptionMenu. """
+    """ Atualiza os campos ao selecionar uma matéria pelo OptionMenu."""
     selecionado = var_materia_selecionada.get()
     id_materia = materias_opcoes.get(selecionado)
 
@@ -152,7 +178,6 @@ def atualizar_campos_materia(*args):
         for horario in materia.get("horario_aula", []):
             adicionar_linha(frame_horarios, pre_dia=horario.get("dia"), pre_hr_entrada=horario.get("hr_entrada"), pre_hr_saida=horario.get("hr_saida"))
 
-
 def cadastrar_materia():
     """ Salva a matéria no banco de dados. """
     nome = entry_nome.get()
@@ -176,21 +201,26 @@ def cadastrar_materia():
         if dia and hr_inicio and hr_fim:
             horario_aula.append({"dia": dia, "hr_entrada": hr_inicio, "hr_saida": hr_fim})
 
-    # Obtendo o ID armazenado no entry_id
     entry_id.config(state="normal")
     materia_id = entry_id.get()
     entry_id.config(state="disabled")
 
     try:
         salvar_materia(nome, descricao, periodo, int(carga_horaria), conteudos, int(qtd_aulas), int(duracao_aulas_min), horario_aula, materia_id)
-        messagebox.showinfo("Sucesso", "Matéria cadastrada com sucesso!")
-        atualizar_campos_materia()
+        
+        # Atualiza a lista de matérias registradas
+        carregar_materias_registradas()
+        
+        # Atualiza o OptionMenu com as novas matérias
         atualizar_lista_materias()
         
-        # root.destroy()
+        # Limpa os campos após o cadastro
+        limpar_campos()
+        
+        messagebox.showinfo("Sucesso", "Matéria cadastrada com sucesso!")
+        
     except Exception as e:
         messagebox.showerror("Erro", f"Erro ao salvar matéria: {e}")
-
 
 root = tb.Window(themename="superhero")
 root.title("Cadastro de Matéria")

@@ -6,12 +6,36 @@
     },
     "registro_notas": [
         {
+            "Matéria": "Educação Física",
+            "Período": "1",
+            "n1": "10",
+            "n2": "10",
+            "n3": "10",
+            "n4": "10"
+        },
+        {
+            "Matéria": "História",
+            "Período": "1",
+            "n1": "10",
+            "n2": "05",
+            "n3": "10",
+            "n4": "10"
+        },
+        {
             "Matéria": "História",
             "Período": "2",
             "n1": "",
             "n2": "",
             "n3": "",
             "n4": ""
+        },
+        {
+            "Matéria": "História",
+            "Período": "2",
+            "n1": "10",
+            "n2": "10",
+            "n3": "10",
+            "n4": "11"
         },
         {
             "Matéria": "Ciências",
@@ -22,12 +46,12 @@
             "n4": ""
         },
         {
-            "Matéria": "Educação Física",
-            "Período": "1",
-            "n1": "10",
-            "n2": "10",
-            "n3": "10",
-            "n4": "10"
+            "Matéria": "História",
+            "Período": "4",
+            "n1": "",
+            "n2": "",
+            "n3": "",
+            "n4": ""
         }
     ],
     "dados_academicos": {
@@ -38,25 +62,6 @@
         "qtd_notas_periodo": 5,
         "carga_horaria": 6000,
         "materias": {
-            "1": {
-                "nome": "Linguagem",
-                "descricao": "python",
-                "periodo": "2",
-                "carga_horaria": 100,
-                "qtd_aulas": 10,
-                "duracao_aulas_min": 10,
-                "horario_aula": [
-                    {
-                        "dia": "segunda-feira",
-                        "hr_entrada": "19:00",
-                        "hr_saida": "20:00"
-                    }
-                ],
-                "conteudos": [
-                    "python",
-                    " tkinter"
-                ]
-            },
             "2": {
                 "nome": "Linguagem de programaçãooooo",
                 "descricao": "python",
@@ -81,16 +86,28 @@
                     " tkinter"
                 ]
             },
-            "": {
-                "nome": "Python",
-                "descricao": "Alguma coisa",
-                "periodo": "7",
-                "carga_horaria": 8,
-                "qtd_aulas": 8,
-                "duracao_aulas_min": 8,
+            "3": {
+                "nome": "or",
+                "descricao": "90",
+                "periodo": "90",
+                "carga_horaria": 9,
+                "qtd_aulas": 90,
+                "duracao_aulas_min": 90,
                 "horario_aula": [],
                 "conteudos": [
-                    "jk"
+                    "09"
+                ]
+            },
+            "4": {
+                "nome": "iioio",
+                "descricao": "ii",
+                "periodo": "90",
+                "carga_horaria": 90,
+                "qtd_aulas": 9,
+                "duracao_aulas_min": 9,
+                "horario_aula": [],
+                "conteudos": [
+                    "iiiiiiiiiiiiii"
                 ]
             }
         }

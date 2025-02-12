@@ -15,18 +15,6 @@ def ler_login():
     except FileNotFoundError:
         return None
 
-def acessar_bd(oper, local, dados=None):
-    if oper == "r":
-        try:
-            with open(local, "r", encoding="UTF-8") as file:
-                return json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return {}
-    elif oper == "w" and dados is not None:
-        with open(local, "w", encoding="UTF-8") as file:
-            json.dump(dados, file, indent=4)
-        return "Sucesso"
-    return "Erro"
 
 def acessar_bd(modo, caminho, dados=None):
     if modo == "r":
@@ -43,9 +31,19 @@ def ler_login():
     return {"email": "emanoel@gmail.com"}  # Simulação de login
 
 def gerar_novo_id(materias):
-    if not materias:
-        return 1
-    return max(map(int, materias.keys())) + 1
+    # Filtra chaves que são numéricas e não estão vazias
+    # O método .keys() retorna todas as chaves do dicionário materias.
+    # O if k.strip().isdigit() garante que só IDs numéricos sejam convertidos para int.
+    lista_ids = [int(k) for k in materias.keys() if k.strip().isdigit()]
+
+    # Exibe a lista de IDs extraídos para depuração
+    print("Lista de IDs extraídos:", lista_ids)
+
+    # Retorna o maior ID encontrado +1 (para gerar um novo ID único)
+    # Se lista_ids estiver vazia, max([], default=0) retorna 0, então o novo ID será 1.
+    return max(lista_ids, default=0) + 1
+
+
 
 def salvar_materia(nome, descricao, periodo, carga_horaria, conteudos, qtd_aulas, duracao_aulas_min, horario_aula, materia_id):
     usuario = ler_login()["email"]
@@ -58,10 +56,12 @@ def salvar_materia(nome, descricao, periodo, carga_horaria, conteudos, qtd_aulas
         banco["dados_academicos"]["materias"] = {}
     
     materias = banco["dados_academicos"]["materias"]
+    print("keysss:", materias.keys())
     
     # Verifica se a matéria já existe pelo id, Se a matéria for nova, cria um novo ID
-    if materia_id == None:
+    if materia_id == None or materia_id == "":
         materia_id = str(gerar_novo_id(materias))
+    print("idddddd:  ", materia_id)
     
     # Salva/atualiza os dados da matéria
     materias[materia_id] = {
