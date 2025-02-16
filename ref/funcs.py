@@ -13,13 +13,9 @@ def ler_login():
         with open(TEMP_LOG_PATH, 'r') as f:
             return json.load(f)
     except FileNotFoundError:
-        return {"email": None}
+        return None
 
-login_data = ler_login()
-if login_data["email"]:
-    USUARIO = login_data["email"]
-else:
-    USUARIO = None
+USUARIO = ler_login()
 
 def acessar_bd(modo, caminho, dados=None):
     if modo == "r":
@@ -80,27 +76,6 @@ def salvar_materia(nome, descricao, periodo, carga_horaria, conteudos, qtd_aulas
     acessar_bd("w", caminho_arquivo, banco)
     print(f"Matéria '{nome}' salva com sucesso!")
 
-def salvar_dados_academicos(curso, instituicao, qtd_periodos, notas_bimestre, qtd_notas_periodo, carga_horaria):
-     
-    caminho_arquivo = os.path.join(DATA_PATH, USUARIO, "notas.json")
-    banco = acessar_bd("r", caminho_arquivo)
-    
-    if "dados_academicos" not in banco:
-        banco["dados_academicos"] = {}
-    
-    # Salva/atualiza os dados da matéria
-    dados_academicos = {
-        "curso": curso,
-        "instituicao": instituicao,
-        "qtd_periodos": qtd_periodos,
-        "notas_bimestre": notas_bimestre,
-        "qtd_notas_periodo": qtd_notas_periodo,
-        "carga_horaria": carga_horaria,
-    }
-    
-    banco["dados_academicos"] = dados_academicos
-    acessar_bd("w", caminho_arquivo, banco)
-    print(banco)
 
 def acessar_lista(name_lista):
      
@@ -176,6 +151,7 @@ def salvar_dados(novos_dados):
 
 def carregar_materias_registradas():
     """ Carrega a lista de matérias cadastradas. """
+    global materias_registradas
     
     caminho_arquivo = os.path.join(DATA_PATH,  USUARIO, "notas.json")
     dados = acessar_bd("r", caminho_arquivo)
@@ -183,31 +159,11 @@ def carregar_materias_registradas():
         materias_registradas = dados.get("dados_academicos", {}).get("materias", {})
     else:
         materias_registradas = {}
-    print(materias_registradas)
-    return materias_registradas
 
-def carregar_lista_materias():
-    materias = carregar_materias_registradas()
+    print("materias_registradas: ",materias_registradas)
 
-    nomes_materias = []
-    for id_materia, dados_materia in materias.items():
-        nomes_materias.append(dados_materia["nome"])  # Agora adiciona o nome da matéria corretamente
-        print("Opções: ",nomes_materias)
-    return nomes_materias
-
-def quantidade_periodos():
-    caminho_arquivo = os.path.join(DATA_PATH,  USUARIO, "notas.json")
-    dados = acessar_bd("r", caminho_arquivo)
-    periodos = []
-    if isinstance(dados, dict):
-        qtd_periodos = dados.get("dados_academicos", {}).get("qtd_periodos", {})
-        if int(qtd_periodos) == 0:
-            periodos = ["1","2","3","4","5","6","7","8"]
-        else:
-            for i in range(1,qtd_periodos + 1):
-                periodos = periodos+ [f"{i}"]
-    else:
-        periodos = ["1","2","3","4","5","6","7","8"]
-    print(periodos)
-    return periodos
-    
+    opcoes = []
+    for id_materia, dados_materia in materias_registradas.items():
+        opcoes.append(dados_materia["nome"])  # Agora adiciona o nome da matéria corretamente
+        print("Opções: ",opcoes)
+    return opcoes

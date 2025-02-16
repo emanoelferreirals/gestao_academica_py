@@ -1,15 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
 import ttkbootstrap as tb
-from funcs import salvar_materia, acessar_bd, ler_login
+from funcs import salvar_materia, acessar_bd, ler_login, carregar_materias_registradas
 import os
 
 USUARIO = ler_login()["email"]
 DATA_PATH = "data/alunos/"
 
 # Variáveis globais
-horario_aula_rows = []  # Armazena os horários cadastrados
-materias_registradas = []  # Armazena as matérias existentes
+horario_aula_rows = []  # Armazena os horários cadastrados  
 
 def limpar_campos():
     """ Limpa todos os campos do formulário e a tabela de horários. """
@@ -29,7 +28,6 @@ def limpar_campos():
 
     # Limpar tabela de horários
     limpar_tabela_horarios()
-
 
 def adicionar_linha(frame, pre_dia=None, pre_hr_entrada="", pre_hr_saida=""):
     """ Adiciona uma nova linha na tabela de horários de aula. """
@@ -91,31 +89,17 @@ def excluir_materia():
         messagebox.showerror("Erro", "Erro ao acessar o banco de dados!")
 
 
-def carregar_materias_registradas():
-    """ Carrega a lista de matérias cadastradas. """
-    global materias_registradas
-    
-    dados = acessar_bd("r", f"{DATA_PATH}{USUARIO}/notas.json")
-    if isinstance(dados, dict):
-        materias_registradas = dados.get("dados_academicos", {}).get("materias", {})
-    else:
-        materias_registradas = {}
-
-    print("materias_registradas: ",materias_registradas)
-
-    opcoes = ["Cadastrar nova matéria"]
-    for id_materia, dados_materia in materias_registradas.items():
-        opcoes.append(dados_materia["nome"])  # Agora adiciona o nome da matéria corretamente
-        print("Opções: ",opcoes)
-    return opcoes
-
 def atualizar_lista_materias():
     """ Atualiza as opções do OptionMenu garantindo que cada matéria tenha um identificador único. """
     global materias_opcoes  # Dicionário para mapear nomes ao ID real
     materias_opcoes = {"Cadastrar nova matéria": None}
+    materias_registradas = carregar_materias_registradas()
+
+    print(f"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: ", materias_registradas)
     
-    for id_materia, dados in materias_registradas.items():
-        nome_exibido = f"{dados['nome']} ({id_materia})"
+    for id_materia in materias_registradas:
+        print(id_materia)
+        nome_exibido = f"{materias_registradas[id_materia]['nome']}"
         materias_opcoes[nome_exibido] = id_materia
     
     opcoes_materias = list(materias_opcoes.keys())
@@ -137,21 +121,11 @@ def atualizar_campos_materia(*args):
         btn_excluir.grid_remove()  # Esconde o botão
         
         # Limpa os campos
-        entry_id.config(state="normal")
-        entry_id.delete(0, tk.END)
-        entry_id.config(state="disabled")
-
-        entry_nome.delete(0, tk.END)
-        entry_descricao.delete(0, tk.END)
-        entry_periodo.delete(0, tk.END)
-        entry_carga_horaria.delete(0, tk.END)
-        entry_qtd_aulas.delete(0, tk.END)
-        entry_duracao.delete(0, tk.END)
-        entry_conteudos.delete(0, tk.END)
-        limpar_tabela_horarios()
+        limpar_campos() 
     else:
         btn_excluir.grid()  # Mostra o botão de excluir
         
+        materias_registradas = carregar_materias_registradas()
         materia = materias_registradas[id_materia]
 
         entry_id.config(state="normal")

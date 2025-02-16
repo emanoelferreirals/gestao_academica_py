@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from funcs import cadastrar_usuario, login_usuario, abrir_nova_tela, on_close
+
 import subprocess
 
 def fazer_login():
@@ -89,25 +90,27 @@ campos = {
 telas = {
     'login': {
         'lbl_email': {'widget': ttk.Label(frame, text="Email:"), 'row': 0, 'column': 0},
-        'email': campos['email'],
+        'email': {'widget': campos['email']['widget'], 'row': 0, 'column': 1},
         'lbl_senha': {'widget': ttk.Label(frame, text="Senha:"), 'row': 1, 'column': 0},
-        'senha': campos['senha'],
+        'senha': {'widget': campos['senha']['widget'], 'row': 1, 'column': 1},
         'btn_login': {'widget': ttk.Button(frame, text="Login", command=fazer_login, bootstyle="success"), 'row': 2, 'column': 0, 'columnspan': 2},
         'btn_cadastro': {'widget': ttk.Button(frame, text="Criar Conta", command=lambda: mostrar_tela('cadastro'), bootstyle="info"), 'row': 3, 'column': 0, 'columnspan': 2}
     },
     'cadastro': {
         'lbl_nome': {'widget': ttk.Label(frame, text="Nome Completo:"), 'row': 0, 'column': 0},
-        'nome': campos['nome'],
+        'nome': {'widget': campos['nome']['widget'], 'row': 0, 'column': 1},
         'lbl_email_cd': {'widget': ttk.Label(frame, text="Email:"), 'row': 1, 'column': 0},
-        'email_cd': campos['email_cd'],
+        'email_cd': {'widget': campos['email_cd']['widget'], 'row': 1, 'column': 1},
         'lbl_senha_cd': {'widget': ttk.Label(frame, text="Senha:"), 'row': 2, 'column': 0},
-        'senha_cd': campos['senha_cd'],
+        'senha_cd': {'widget': campos['senha_cd']['widget'], 'row': 2, 'column': 1},
         'lbl_conf_senha': {'widget': ttk.Label(frame, text="Confirmar Senha:"), 'row': 3, 'column': 0},
-        'conf_senha': campos['conf_senha'],
+        'conf_senha': {'widget': campos['conf_senha']['widget'], 'row': 3, 'column': 1},
         'btn_cadastrar': {'widget': ttk.Button(frame, text="Cadastrar", command=fazer_cadastro, bootstyle="success"), 'row': 4, 'column': 1},
         'btn_voltar': {'widget': ttk.Button(frame, text="Voltar", command=lambda: mostrar_tela('login'), bootstyle="danger"), 'row': 4, 'column': 0}
     }
 }
+
+
 
 # Exibir a tela inicial
 mostrar_tela('login')

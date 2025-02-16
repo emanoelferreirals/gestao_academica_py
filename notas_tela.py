@@ -1,9 +1,10 @@
 # notas_tela
-from funcs import carregar_dados, salvar_dados, on_close,abrir_nova_tela, acessar_lista
+from funcs import carregar_dados, salvar_dados, on_close,abrir_nova_tela, acessar_bd, ler_login, carregar_lista_materias, quantidade_periodos  
 import tkinter as tk
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox  # Para mostrar a janela de aviso
+
 
 largura_tela = 800
 altura_tela = 500
@@ -61,8 +62,13 @@ for col, titulo in enumerate(titulos):
     tk.Label(frame_conteudo_tabela, text=titulo, font=("Arial", 10, "bold"), padx=5, pady=5).grid(row=0, column=col)
 
 # Lista de matérias e períodos disponíveis
-materias = ["Português", "Matemática", "Ciências", "História", "Educação Física", "Artes", "Inglês"]
-semestres = ["1", "2", "3", "4"]
+
+if carregar_lista_materias():
+    materias = carregar_lista_materias()
+else:
+    materias = [" "]
+
+semestres = quantidade_periodos()
 
 """-----------------------------MOSTRAR E ESCONDER BOTAO-------------------------"""
 # Função para mostrar o botão de salvar
