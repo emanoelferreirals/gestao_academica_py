@@ -6,6 +6,7 @@ import markdown
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from textwrap import wrap
+from funcs import acessar_bd, DATA_PATH,USUARIO
 
 # Definir chave da API
 os.environ["GROQ_API_KEY"] = "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"  # Substitua pela sua chave correta
@@ -25,6 +26,8 @@ def exibir_tela(element_pai):
         - Um resumo do desempenho do aluno.
         - Pontos fortes e fracos.
         - Sugestões de estudo para melhorar as notas mais baixas.
+        - Informações sobre horários de estudo e possíveis conflitos.
+        - Conteúdos de cada matéria que devem ser revisados.
         """
 
         try:
@@ -39,11 +42,9 @@ def exibir_tela(element_pai):
     # Função para mostrar relatório
     def mostrar_relatorio():
         global relatorio_texto  
-
-        notas = [
-            {"Matéria": "Matemática", "Período": "1", "n1": "10", "n2": "20", "n3": "12", "n4": "100"},
-            {"Matéria": "Portugues", "Período": "6", "n1": "90", "n2": "89", "n3": "30", "n4": "100"},
-        ]
+        
+        caminho_arquivo = os.path.join(DATA_PATH, USUARIO, "notas.json")
+        notas = acessar_bd("r",caminho_arquivo)
         
         relatorio_texto = gerar_relatorio(notas)
         
@@ -113,3 +114,11 @@ def exibir_tela(element_pai):
     botao_pdf.pack(pady=10)
 
     element_pai.mainloop()
+
+# Exemplo de uso
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Relatório de Desempenho")
+    root.geometry("800x600")
+
+    exibir_tela(root)

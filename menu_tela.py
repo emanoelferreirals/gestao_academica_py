@@ -7,16 +7,19 @@ from telas import cadastro_materias, notas, cadastro_dados_academicos, relatorio
 
 
 # Funções para os botões
-def abrir_config(element):
-    print("Abrindo configurações...")
+def logout(root):
+    abrir_nova_tela(root,"login_tela.py",True)
+    on_close(root)
 
 def abrir_disciplinas(element):
     esconder_widgets(element)
     botao_voltar.pack(pady=10)  # Exibe o botão "Voltar"
     cadastro_materias.exibir_tela(element)  # Exibe a tela de notas na mesma janela
 
-def abrir_historico(element):
-    print("Abrindo Histórico...")
+def abrir_graficos(element):
+    esconder_widgets(element)
+    botao_voltar.pack(pady=10)  # Exibe o botão "Voltar"
+    grafico.exibir_tela(element)  # Exibe a tela de notas na mesma janela
 
 def abrir_cursos(element):
     print("Abrindo Meus Cursos...")
@@ -53,10 +56,10 @@ def exibir_menu(frame_pai):
     lbl_usuario = ttk.Label(frame_topo, text="Aluno Carlos", font=("Arial", 12, "bold"), bootstyle="black")
     lbl_usuario.pack(side="left", padx=20, pady=5)
 
-    icon_config = Image.open("resources/icones/config.png").resize((30, 30))
+    icon_config = Image.open("resources/icones/logout.png").resize((30, 30))
     icon_config = ImageTk.PhotoImage(icon_config)
 
-    btn_config = ttk.Button(frame_topo, image=icon_config, bootstyle="light", command=lambda: abrir_config(frame_pai))
+    btn_config = ttk.Button(frame_topo, image=icon_config, bootstyle="light", command=lambda: logout(root))
     btn_config.image = icon_config
     btn_config.pack(side="right", padx=10)
 
@@ -68,7 +71,7 @@ def exibir_menu(frame_pai):
 
     botoes = [
         ("Minhas Disciplinas", "resources/icones/disciplinas.png", abrir_disciplinas),
-        ("Histórico", "resources/icones/historico.png", abrir_historico),
+        ("Gráficos", "resources/icones/graficos.png", abrir_graficos),
         ("Meus Cursos", "resources/icones/cursos.png", abrir_cursos),
         ("Notas", "resources/icones/notas.png", abrir_notas),
         ("Desempenho", "resources/icones/desempenho.png", abrir_desempenho),

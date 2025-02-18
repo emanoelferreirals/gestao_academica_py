@@ -95,8 +95,6 @@ def exibir_tela(element_pai):
         global materias_opcoes  # Dicionário para mapear nomes ao ID real
         materias_opcoes = {"Cadastrar nova matéria": None}
         materias_registradas = carregar_materias_registradas()
-
-        print(f"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: ", materias_registradas)
         
         for id_materia in materias_registradas:
             print(id_materia)

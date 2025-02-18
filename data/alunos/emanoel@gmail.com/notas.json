@@ -6,14 +6,23 @@
     },
     "registro_notas": [
         {
-            "Mat\u00e9ria": "Mat\u00e9ria",
-            "Per\u00edodo": 0,
+            "Matéria": "Matéria",
+            "Período": 0,
             "n1": 0,
             "n2": 0,
             "n3": 0,
             "n4": 0,
-            "M\u00e9dia": "M\u00e9dia",
+            "Média": "Média",
             "": ""
+        },
+        {
+            "Período": 0,
+            "Matéria": "PORTUGUES",
+            "n1": 10,
+            "n2": 10,
+            "n3": 10,
+            "n4": 10,
+            "Média": "10.00"
         }
     ],
     "dados_academicos": {
@@ -22,6 +31,20 @@
         "qtd_periodos": 6,
         "notas_bimestre": true,
         "qtd_notas_periodo": 5,
-        "carga_horaria": 6000
+        "carga_horaria": 6000,
+        "materias": {
+            "2": {
+                "nome": "mATEMATICA",
+                "descricao": "UAUA",
+                "periodo": "2",
+                "carga_horaria": 10,
+                "qtd_aulas": 10,
+                "duracao_aulas_min": 10,
+                "horario_aula": [],
+                "conteudos": [
+                    "BBSD"
+                ]
+            }
+        }
     }
 }

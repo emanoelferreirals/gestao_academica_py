@@ -1,4 +1,4 @@
-from funcs import carregar_dados, salvar_dados, on_close, abrir_nova_tela, acessar_bd, carregar_lista_materias, carregar_periodos  
+from funcs import carregar_dados, salvar_dados, on_close, abrir_nova_tela, acessar_bd, carregar_lista_materias, carregar_periodos
 import tkinter as tk
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
@@ -17,7 +17,7 @@ def exibir_tela(element):
     label_titulo.grid(row=0, column=0, pady=10)
 
     # Criando um Canvas para a tabela
-    canvas_tabela = tk.Canvas(frame_principal, width=900, height=350)
+    canvas_tabela = tk.Canvas(frame_principal, width=900, height=700)
     canvas_tabela.grid(row=1, column=0)
 
     # Criando a Scrollbar vertical
@@ -37,8 +37,8 @@ def exibir_tela(element):
         return total / len(notas) if len(notas) > 0 else 0
 
     # Função para excluir uma linha
-    def excluir_linha(row):
-        for widget in row:
+    def excluir_linha(row_widgets):
+        for widget in row_widgets:
             widget.destroy()
         salvar()
 
@@ -106,11 +106,7 @@ def exibir_tela(element):
         tk.Label(frame_conteudo_tabela, text=titulo, font=("Arial", 10, "bold"), padx=5, pady=5).grid(row=0, column=col)
 
     # Lista de matérias e períodos disponíveis
-    if carregar_lista_materias():
-        materias = carregar_lista_materias()
-    else:
-        materias = [" "]
-
+    materias = carregar_lista_materias() or [" "]
     semestres = carregar_periodos()
 
     """------------------------GERENCIAMENTO DA TABELA-----------------------------------"""
@@ -119,10 +115,9 @@ def exibir_tela(element):
         dados = []  # Lista para armazenar múltiplas linhas
 
         widgets = frame_conteudo_tabela.winfo_children()
-        print(widgets)
 
         # Cabeçalhos da tabela
-        titulos = ["Matéria", "Período", "n1", "n2", "n3", "n4", "Média", ""]  # Ajuste conforme sua tabela
+        titulos = ["Matéria", "Período", "n1", "n2", "n3", "n4", "Média", ""]
 
         # Dicionário temporário para armazenar uma linha completa
         dados_por_linha = {}
@@ -154,7 +149,7 @@ def exibir_tela(element):
                 valor = widget.get().strip()
 
             elif isinstance(widget, tk.Label):
-                valor = widget.cget("text").strip()                
+                valor = widget.cget("text").strip()
             else:
                 continue
 
@@ -172,7 +167,6 @@ def exibir_tela(element):
         if dados_por_linha:
             dados.append(dados_por_linha)
 
-        print("Dados capturados:", dados)
         salvar_dados(dados)
         preencher_tabela()
         Messagebox.ok("Alterações feitas com sucesso!", "Aviso")
@@ -181,7 +175,7 @@ def exibir_tela(element):
         dados = carregar_dados()
 
         # Ordenar os dados pelo valor do período (menor para maior)
-        dados_ordenados = sorted(dados, key=lambda x: int(x.get("Período", 0))) 
+        dados_ordenados = sorted(dados, key=lambda x: int(x.get("Período", 0)))
 
         # Limpar a tabela existente
         for widget in frame_conteudo_tabela.winfo_children():
@@ -227,8 +221,14 @@ def exibir_tela(element):
     # Carregar os dados e preencher a tabela ao iniciar a interface
     preencher_tabela()
 
-    # Vinculando a função on_close ao evento de fechar a janela
-    element.protocol("WM_DELETE_WINDOW", lambda: on_close(element))  # Chamando a função on_close
-
     # Rodando a interface
     element.mainloop()
+
+# Exemplo de uso
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Gerenciamento de Notas")
+    root.geometry("1200x800")
+
+    # Inicializando a interface
+    exibir_tela(root)
