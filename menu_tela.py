@@ -29,7 +29,6 @@ def abrir_notas(element):
 def abrir_desempenho(element):
     esconder_widgets(element)
     botao_voltar.pack(pady=10)  # Exibe o botão "Voltar"
-    grafico.exibir_tela(element)  # Exibe a tela de notas na mesma janela
     relatorio.exibir_tela(element)  # Exibe a tela de notas na mesma janela
 
 def abrir_conta(element):

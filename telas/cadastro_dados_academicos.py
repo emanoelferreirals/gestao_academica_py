@@ -11,6 +11,8 @@ def exibir_tela(element_pai):
     # Carrega os dados acadêmicos, se existirem
     banco = acessar_bd("r", caminho_arquivo)
     dados_academicos = banco.get("dados_academicos", {})
+    cadastro = banco.get("cadastro", {})
+    registro_notas = banco.get("registro_notas", [])
 
     # Criar frame para organizar os elementos
     frame = tb.Frame(element_pai, padding=10)
@@ -24,7 +26,14 @@ def exibir_tela(element_pai):
         entry.insert(0, valor_padrao)  # Preenche com o valor existente, se houver
         return entry
 
-    # Criar os campos preenchidos com os dados existentes
+    # Criar os campos preenchidos com os dados existentes do cadastro
+    tb.Label(frame, text="Dados do Cadastro", font=('Helvetica', 14, 'bold')).pack(anchor='w', pady=(10, 0))
+    entry_nome = criar_campo("Nome:", cadastro.get("nome", ""))
+    entry_email = criar_campo("Email:", cadastro.get("email", ""))
+    entry_senha = criar_campo("Senha:", cadastro.get("senha", ""))
+
+    # Criar os campos preenchidos com os dados existentes dos dados acadêmicos
+    tb.Label(frame, text="Dados Acadêmicos", font=('Helvetica', 14, 'bold')).pack(anchor='w', pady=(10, 0))
     entry_curso = criar_campo("Curso:", dados_academicos.get("curso", ""))
     entry_instituicao = criar_campo("Instituição:", dados_academicos.get("instituicao", ""))
     entry_qtd_periodos = criar_campo("Quantidade de Períodos:", str(dados_academicos.get("qtd_periodos", "")))
@@ -34,14 +43,38 @@ def exibir_tela(element_pai):
 
     # Função para salvar os dados
     def salvar():
+        # Salvar dados do cadastro
+        nome = entry_nome.get()
+        email = entry_email.get()
+        senha = entry_senha.get()
+
+        # Salvar dados acadêmicos
         curso = entry_curso.get()
         instituicao = entry_instituicao.get()
         qtd_periodos = int(entry_qtd_periodos.get() or 0)
         notas_bimestre = entry_notas_bimestre.get().lower() == 'true'
         qtd_notas_periodo = int(entry_qtd_notas_periodo.get() or 0)
         carga_horaria = int(entry_carga_horaria.get() or 0)
-        
-        salvar_dados_academicos(curso, instituicao, qtd_periodos, notas_bimestre, qtd_notas_periodo, carga_horaria)
+
+        # Atualiza o banco de dados
+        banco["cadastro"] = {
+            "nome": nome,
+            "email": email,
+            "senha": senha
+        }
+        banco["dados_academicos"] = {
+            "curso": curso,
+            "instituicao": instituicao,
+            "qtd_periodos": qtd_periodos,
+            "notas_bimestre": notas_bimestre,
+            "qtd_notas_periodo": qtd_notas_periodo,
+            "carga_horaria": carga_horaria
+        }
+
+        # Salvar os dados no arquivo JSON
+        with open(caminho_arquivo, 'w') as f:
+            json.dump(banco, f, indent=4)
+
         tb.Label(frame, text="Dados salvos com sucesso!", foreground="green").pack()
 
     # Botão de salvar

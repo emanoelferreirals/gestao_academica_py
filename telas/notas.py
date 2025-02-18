@@ -154,7 +154,7 @@ def exibir_tela(element):
                 valor = widget.get().strip()
 
             elif isinstance(widget, tk.Label):
-                valor = widget.cget("text").strip()                 
+                valor = widget.cget("text").strip()                
             else:
                 continue
 

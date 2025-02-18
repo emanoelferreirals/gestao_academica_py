@@ -31,13 +31,10 @@ def exibir_tela(element):
     canvas_tabela.configure(yscrollcommand=scrollbar_tabela.set)
 
     # Criando botões laterais
-    btn_cadastrar_materia = tk.Button(frame_botoes, text="Cadastrar Matéria", width=20, command=lambda: abrir_cadastro_notas(element))
-    btn_cadastrar_materia.pack(pady=10)
-
-    btn_adicionar_linha = tk.Button(frame_botoes, text="Adicionar Linha", width=20, command=lambda: adicionar_linha())
+    btn_adicionar_linha = tk.Button(frame_botoes, text="Adicionar Linha", width=20, command=lambda: adicionar_linha)
     btn_adicionar_linha.pack(pady=10)
 
-    btn_salvar = tk.Button(frame_botoes, text="Salvar Alterações", width=20, command=lambda: salvar())
+    btn_salvar = tk.Button(frame_botoes, text="Salvar Alterações", width=20, command=lambda: salvar)
     btn_salvar.pack(pady=10)
 
     # Cabeçalhos da tabela

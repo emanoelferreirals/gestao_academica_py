@@ -160,6 +160,7 @@ def login_usuario(email,senha):
     if banco.get("cadastro", {}).get("senha") != senha:
         return "Senha incorreta!"
     salvar_login(banco["cadastro"]["nome"], email)
+    print(banco["cadastro"]["nome"], email)
     return True
 
 def carregar_dados():

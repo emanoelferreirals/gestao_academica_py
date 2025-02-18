@@ -2,17 +2,17 @@
     "cadastro": {
         "nome": "Emanoel Ferreira",
         "email": "emanoel@gmail.com",
-        "senha": "123"
+        "senha": "1234"
     },
     "registro_notas": [
         {
-            "Matéria": "Matéria",
-            "Período": 0,
+            "Mat\u00e9ria": "Mat\u00e9ria",
+            "Per\u00edodo": 0,
             "n1": 0,
             "n2": 0,
             "n3": 0,
             "n4": 0,
-            "Média": "Média",
+            "M\u00e9dia": "M\u00e9dia",
             "": ""
         }
     ],
