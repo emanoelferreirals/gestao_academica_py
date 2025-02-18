@@ -1,6 +1,6 @@
 import ttkbootstrap as ttk
 from PIL import Image, ImageTk  # Importação do Pillow
-from funcs import abrir_nova_tela, on_close
+from funcs import abrir_nova_tela, on_close,ler_login
 from renderizer.centralizar_janela import centralizar_janela
 import telas as tl
 from telas import cadastro_materias, notas, cadastro_dados_academicos, relatorio, grafico
@@ -53,7 +53,9 @@ def exibir_menu(frame_pai):
     frame_topo = ttk.Frame(frame_pai, bootstyle="light")
     frame_topo.pack(fill='x')
 
-    lbl_usuario = ttk.Label(frame_topo, text="Aluno Carlos", font=("Arial", 12, "bold"), bootstyle="black")
+    aluno = ler_login().get("nome")
+
+    lbl_usuario = ttk.Label(frame_topo, text=f"Aluno: {aluno}", font=("Arial", 12, "bold"), bootstyle="black")
     lbl_usuario.pack(side="left", padx=20, pady=5)
 
     icon_config = Image.open("resources/icones/logout.png").resize((30, 30))
@@ -63,7 +65,7 @@ def exibir_menu(frame_pai):
     btn_config.image = icon_config
     btn_config.pack(side="right", padx=10)
 
-    lbl_acesso_rapido = ttk.Label(frame_pai, text="Acesso Rápido", font=("Arial", 12, "bold"), background="#302c9b")
+    lbl_acesso_rapido = ttk.Label(frame_pai, text="Acesso Rápido", font=("Arial", 12, "bold"), background="#ffffff")
     lbl_acesso_rapido.pack(pady=10)
 
     frame_botoes = ttk.Frame(frame_pai, bootstyle="light")

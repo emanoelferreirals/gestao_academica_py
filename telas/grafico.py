@@ -19,71 +19,76 @@ def exibir_tela(element_pai):
         # Supondo que as notas estão armazenadas na estrutura 'registro_notas'
         return banco.get("registro_notas", [])
 
-    # Função para criar o gráfico de evolução das notas para uma matéria específica
-    def criar_grafico(element_pai, dados_notas, materia_selecionada):
+    # Função para criar o gráfico de barras comparando as médias das disciplinas
+    def criar_grafico(element_pai, dados_notas):
         if not dados_notas:
             print("Nenhum dado de nota encontrado.")
             return
         
-        # Filtrando os dados da matéria selecionada
-        materia_dados = [registro for registro in dados_notas if registro['Matéria'] == materia_selecionada]
-        
-        if not materia_dados:
-            print(f"Nenhum dado encontrado para a matéria {materia_selecionada}.")
-            return
-        
         # Extraindo dados para plotar
-        periodos = [f"Período {registro['Período']}" for registro in materia_dados]
-        n1 = [int(registro['n1']) for registro in materia_dados]
-        n2 = [int(registro['n2']) for registro in materia_dados]
-        n3 = [int(registro['n3']) for registro in materia_dados]
-        n4 = [int(registro['n4']) for registro in materia_dados]
+        materias = list(set([registro['Matéria'] for registro in dados_notas]))
+        medias = []
+        for materia in materias:
+            medias_materia = [float(registro['Média']) for registro in dados_notas if registro['Matéria'] == materia and is_number(registro['Média'])]
+            if medias_materia:
+                medias.append(sum(medias_materia) / len(medias_materia))
+            else:
+                medias.append(0)  # Caso não haja médias válidas, define média como 0
 
         # Criando a figura do gráfico
         fig = Figure(figsize=(10, 6))
         ax = fig.add_subplot(111)
-        ax.plot(periodos, n1, marker='o', label='N1')
-        ax.plot(periodos, n2, marker='o', label='N2')
-        ax.plot(periodos, n3, marker='o', label='N3')
-        ax.plot(periodos, n4, marker='o', label='N4')
+        ax.bar(materias, medias, color='skyblue')
 
-        ax.set_xlabel('Períodos')
-        ax.set_ylabel('Notas')
-        ax.set_title(f'Evolução das Notas - {materia_selecionada}')
-        ax.legend()
+        ax.set_xlabel('Matérias')
+        ax.set_ylabel('Médias')
+        ax.set_title('Comparação das Médias das Disciplinas')
         
-        # Formatando os períodos no eixo x
-        fig.autofmt_xdate()
-
         # Integrando o gráfico na element_pai TkInter
-        canvas = FigureCanvasTkAgg(fig, master=element_pai)
+        for widget in frame_grafico.winfo_children():
+            widget.destroy()
+        canvas = FigureCanvasTkAgg(fig, master=frame_grafico)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
+    # Função auxiliar para verificar se uma string pode ser convertida para número
+    def is_number(s):
+        try:
+            float(s)
+            return True
+        except ValueError:
+            return False
+
     # Função para exibir o gráfico ao clicar no botão
-    def exibir_grafico(materia_selecionada):
+    def exibir_grafico():
         dados_notas = buscar_dados_usuario()
-        criar_grafico(element_pai, dados_notas, materia_selecionada)
+        criar_grafico(frame_grafico, dados_notas)
 
-    # Função para atualizar o gráfico quando uma nova matéria é selecionada
-    def atualizar_grafico(*args):
-        materia_selecionada = var_materia.get()
-        exibir_grafico(materia_selecionada)
+    # Função para limpar o gráfico
+    def limpar_grafico():
+        for widget in frame_grafico.winfo_children():
+            widget.destroy()
 
-    # Carregar a lista de matérias
-    materias = carregar_lista_materias()
+    # Configurando o layout da janela principal
+    element_pai.grid_rowconfigure(1, weight=1)
+    element_pai.grid_columnconfigure(0, weight=1)
 
-    # Variável para armazenar a matéria selecionada
-    var_materia = tk.StringVar(element_pai)
-    var_materia.set(materias[0] if materias else '')
+    # Frame para o gráfico
+    frame_grafico = tk.Frame(element_pai)
+    frame_grafico.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky='nsew')
 
-    # MenuOption para selecionar a matéria
-    menu_materias = ttk.OptionMenu(element_pai, var_materia, materias[0], *materias, command=atualizar_grafico)
-    menu_materias.pack(side=tk.TOP, pady=10)
+    # Frame para os botões
+    frame_botoes = tk.Frame(element_pai)
+    frame_botoes.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky='ew')
 
     # Botão para exibir o gráfico
-    botao_grafico = ttk.Button(element_pai, text='Exibir Gráfico', command=lambda: exibir_grafico(var_materia.get()))
-    botao_grafico.pack(side=tk.TOP, pady=10)
+    botao_grafico = ttk.Button(frame_botoes, text='Exibir Gráfico', command=exibir_grafico)
+    botao_grafico.pack(side=tk.LEFT, padx=5)
+
+    # Botão para limpar o gráfico
+    botao_limpar = ttk.Button(frame_botoes, text='Limpar', command=limpar_grafico)
+    botao_limpar.pack(side=tk.LEFT, padx=5)
 
     # Iniciando o loop da element_pai
     element_pai.mainloop()
+

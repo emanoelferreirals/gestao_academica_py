@@ -120,7 +120,7 @@ def cadastrar_usuario(nome, email, senha):
             "nome": nome,
             "email": email,
             "senha": senha
-        }
+        }   
     }
     if not validar_email(email):
         return "Email inválido!"
