@@ -8,7 +8,7 @@ from reportlab.pdfgen import canvas
 from textwrap import wrap
 
 # Definir chave da API
-os.environ["GROQ_API_KEY"] = "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"  # Substitua pela sua chave correta
+os.environ["GROQ_API_KEY"] = "chave"  # Substitua pela sua chave correta
 
 # Configuração do cliente Groq
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
