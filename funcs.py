@@ -132,11 +132,16 @@ def abrir_nova_tela(tela_atual, tela,destroy_atual):
 def validar_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
-def cadastrar_usuario(dados):
-    email = dados["cadastro"]["email"]
-    senha = dados["cadastro"]["senha"]
-    if not email or not senha or not dados["cadastro"].get("nome"):
-        return "Preencha todos os campos!"
+def cadastrar_usuario(nome,email,senha):
+    dados = {
+        "cadastro":{
+            "nome": nome,
+            "email":email,
+            "senha":senha
+        }
+    }
+    """if not email or not senha or not dados["cadastro"].get("nome"):
+        return "Preencha todos os campos!"""
     if not validar_email(email):
         return "Email inválido!"
     caminho_arquivo = os.path.join(DATA_PATH, email, "notas.json")
@@ -144,11 +149,10 @@ def cadastrar_usuario(dados):
         return "Usuário já cadastrado!"
     os.makedirs(os.path.join(DATA_PATH, email), exist_ok=True)
     acessar_bd("w", caminho_arquivo, dados)
-    return True
+    return "Usuário Cadastrado com Sucesso!"
 
-def login_usuario(credenciais):
-    email = credenciais["email"]
-    senha = credenciais["senha"]
+def login_usuario(email,senha):
+    
     caminho_arquivo = os.path.join(DATA_PATH, email, "notas.json")
     banco = acessar_bd("r", caminho_arquivo)
     if not banco:
@@ -195,7 +199,7 @@ def carregar_lista_materias():
         print("Opções: ",nomes_materias)
     return nomes_materias
 
-def quantidade_periodos():
+def carregar_periodos():
     caminho_arquivo = os.path.join(DATA_PATH,  USUARIO, "notas.json")
     dados = acessar_bd("r", caminho_arquivo)
     periodos = []

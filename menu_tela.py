@@ -1,63 +1,70 @@
-import ttkbootstrap as tb
+import ttkbootstrap as ttk
 from PIL import Image, ImageTk  # Importação do Pillow
 from funcs import abrir_nova_tela, on_close
+from renderizer.centralizar_janela import centralizar_janela
+import telas as tl
+from telas import cadastro_materias, notas, cadastro_dados_academicos, relatorio, grafico
+
 
 # Funções para os botões
-def abrir_config(tela_atual):
+def abrir_config(element):
     print("Abrindo configurações...")
 
-def abrir_disciplinas(tela_atual):
-    print("Abrindo Minhas Disciplinas...")
+def abrir_disciplinas(element):
+    esconder_widgets(element)
+    botao_voltar.pack(pady=10)  # Exibe o botão "Voltar"
+    cadastro_materias.exibir_tela(element)  # Exibe a tela de notas na mesma janela
 
-def abrir_historico(tela_atual):
+def abrir_historico(element):
     print("Abrindo Histórico...")
 
-def abrir_cursos(tela_atual):
+def abrir_cursos(element):
     print("Abrindo Meus Cursos...")
-    print("Abrindo Notas...")
-    abrir_nova_tela(tela_atual,"notas_tela.py",False)
 
-def abrir_notas(tela_atual):
-    print("Abrindo Notas...")
-    abrir_nova_tela(tela_atual,"notas_tela.py",False)
+def abrir_notas(element):
+    esconder_widgets(element)
+    botao_voltar.pack(pady=10)  # Exibe o botão "Voltar"
+    notas.exibir_tela(element)  # Exibe a tela de notas na mesma janela
 
-def abrir_desempenho(tela_atual):
-    print("Abrindo Desempenho...")
+def abrir_desempenho(element):
+    esconder_widgets(element)
+    botao_voltar.pack(pady=10)  # Exibe o botão "Voltar"
+    grafico.exibir_tela(element)  # Exibe a tela de notas na mesma janela
+    relatorio.exibir_tela(element)  # Exibe a tela de notas na mesma janela
 
-def abrir_conta(tela_atual):
-    print("Abrindo Conta...")
+def abrir_conta(element):
+    esconder_widgets(element)
+    botao_voltar.pack(pady=10)  # Exibe o botão "Voltar"
+    cadastro_dados_academicos.exibir_tela(element)  # Exibe a tela de notas na mesma janela
 
-def criar_janela():
-    root = tb.Window(themename="minty")
-    root.title("Menu com Imagens")
-    root.geometry("900x500")
-    root.configure(bg="#c0f0d0")
+def voltar_para_menu():
+    esconder_widgets(canvas)
+    exibir_menu(canvas)
+    botao_voltar.pack_forget()  # Esconde o botão "Voltar"
 
-    # Definindo um estilo personalizado para o Frame e outros widgets
-    root.style.configure("my.TFrame", background="#c0f0d0")
-    root.style.configure("my.TButton", font=("Arial", 10, "bold"), width=15, height=3)  # Ajuste o tamanho dos botões
+def esconder_widgets(root):
+    for widget in root.winfo_children():
+        widget.pack_forget()
+        widget.grid_forget()
 
-    # Barra superior
-    frame_topo = tb.Frame(root, bootstyle="light")
+def exibir_menu(frame_pai):
+    frame_topo = ttk.Frame(frame_pai, bootstyle="light")
     frame_topo.pack(fill='x')
-    
-    lbl_usuario = tb.Label(frame_topo, text="Aluno Carlos", font=("Arial", 12, "bold"), bootstyle="black")
-    lbl_usuario.pack(side="left", padx=20, pady=5)
-    
-    icon_config = Image.open("resources/icones/config.png")  # Substitua pelo ícone correto
-    icon_config = icon_config.resize((30, 30))  # Redimensiona para 30x30 pixels
-    icon_config = ImageTk.PhotoImage(icon_config)  # Converte para formato do tkinter
 
-    btn_config = tb.Button(frame_topo, image=icon_config, bootstyle="light", command=lambda: abrir_config(root))
-    btn_config.image = icon_config  # Para evitar garbage collection
+    lbl_usuario = ttk.Label(frame_topo, text="Aluno Carlos", font=("Arial", 12, "bold"), bootstyle="black")
+    lbl_usuario.pack(side="left", padx=20, pady=5)
+
+    icon_config = Image.open("resources/icones/config.png").resize((30, 30))
+    icon_config = ImageTk.PhotoImage(icon_config)
+
+    btn_config = ttk.Button(frame_topo, image=icon_config, bootstyle="light", command=lambda: abrir_config(frame_pai))
+    btn_config.image = icon_config
     btn_config.pack(side="right", padx=10)
 
-    # Título "Acesso Rápido"
-    lbl_acesso_rapido = tb.Label(root, text="Acesso Rápido", font=("Arial", 12, "bold"), background="#c0f0d0")
+    lbl_acesso_rapido = ttk.Label(frame_pai, text="Acesso Rápido", font=("Arial", 12, "bold"), background="#302c9b")
     lbl_acesso_rapido.pack(pady=10)
-    
-    # Frame dos botões
-    frame_botoes = tb.Frame(root, bootstyle="light", style="my.TFrame")  # Aplica o estilo personalizado
+
+    frame_botoes = ttk.Frame(frame_pai, bootstyle="light")
     frame_botoes.pack()
 
     botoes = [
@@ -69,23 +76,35 @@ def criar_janela():
         ("Conta", "resources/icones/conta.png", abrir_conta)
     ]
 
-    imagens = []  # Lista para armazenar referências das imagens
+    frame_pai.imagens = []
 
-    for i, (titulo, img_path, funcao) in enumerate(botoes): 
-        img = Image.open(img_path)  # Abre a imagem
-        img = img.resize((150, 150), Image.Resampling.LANCZOS)  # Redimensiona para 30x30 pixels
-        img = ImageTk.PhotoImage(img)  # Converte para formato do tkinter
+    for i, (titulo, img_path, funcao) in enumerate(botoes):
+        img = Image.open(img_path).resize((150, 150), Image.Resampling.LANCZOS)
+        img = ImageTk.PhotoImage(img)
+        frame_pai.imagens.append(img)
 
-        imagens.append(img)  # Armazena referência para evitar garbage collection
-
-        # Redimensionando os botões e aplicando a cor de fundo
-        btn = tb.Button(frame_botoes, text=titulo, image=img, compound="top", bootstyle="secondary", style="my.TButton", command=lambda funcao=funcao: funcao(root))
+        btn = ttk.Button(frame_botoes, text=titulo, image=img, compound="top", bootstyle="secondary", command=lambda f=funcao: f(frame_pai))
         btn.grid(row=i//3, column=i%3, padx=20, pady=10)
 
-    # Vinculando a função on_close ao evento de fechar a janela
-    root.protocol("WM_DELETE_WINDOW", lambda: on_close(root))  # Chamando a função on_close
+# Definições de tamanho da janela
+largura_janela = 1800
+altura_janela = 980
 
-    root.mainloop()
+# Criando Janela
+root = ttk.Window(themename="flatly")
+root.title("Menu com Imagens")
+centralizar_janela(root, largura_janela, altura_janela)
+root.configure(bg="#302c9b")
 
-if __name__ == "__main__":
-    criar_janela()
+# Criando um Canvas dentro da janela
+canvas = ttk.Canvas(root, width=largura_janela, height=altura_janela, bg="#302c9b", highlightthickness=0)
+canvas.pack(fill="both", expand=True)
+
+# Criando o botão "Voltar"
+botao_voltar = ttk.Button(root, text="Voltar", bootstyle="danger", command=voltar_para_menu)
+
+exibir_menu(canvas)
+
+root.protocol("WM_DELETE_WINDOW", lambda: on_close(root))
+
+root.mainloop()
