@@ -1,45 +1,47 @@
-from funcs import carregar_dados, salvar_dados, on_close, abrir_nova_tela, acessar_bd, carregar_lista_materias, carregar_periodos  
+# notas_tela
+from funcs import carregar_dados, salvar_dados, on_close,abrir_nova_tela, acessar_bd, carregar_lista_materias, carregar_periodos  
 import tkinter as tk
 from ttkbootstrap import Style
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox  # Para mostrar a janela de aviso
 
 def exibir_tela(element):
-    # Criando os frames
+     # Criando os frames
     frame_botoes = tk.Frame(element, padx=10, pady=10)
-    frame_botoes.grid(row=0, column=0, padx=20, pady=50, sticky="n")
+    frame_botoes.pack(side="left", padx=20, pady=50, fill="y")
 
     frame_principal = tk.Frame(element, padx=20, pady=20)
-    frame_principal.grid(row=0, column=1, padx=20, pady=20)
+    frame_principal.pack(side="right", padx=20, pady=20, fill="both", expand=True)
 
     # Adicionando um título para a tabela
     label_titulo = tk.Label(frame_principal, text="Notas Acadêmicas", font=("Arial", 14, "bold"))
-    label_titulo.grid(row=0, column=0, pady=10)
+    label_titulo.pack(pady=10)
 
     # Criando um Canvas para a tabela
-    canvas_tabela = tk.Canvas(frame_principal, width=800, height=500)
-    canvas_tabela.grid(row=1, column=0)
+    canvas_tabela = tk.Canvas(frame_principal, width=1000, height=350)
+    canvas_tabela.pack()
 
     # Criando a Scrollbar vertical
     scrollbar_tabela = tk.Scrollbar(frame_principal, orient="vertical", command=canvas_tabela.yview)
-    scrollbar_tabela.grid(row=1, column=1, sticky="ns")
+    scrollbar_tabela.pack(side="right", fill="y")
 
     # Criando um frame dentro do Canvas para a tabela
     frame_conteudo_tabela = tk.Frame(canvas_tabela)
     canvas_tabela.create_window((0, 0), window=frame_conteudo_tabela, anchor="nw")
-
-    # Configurando o Canvas para funcionar com a Scrollbar
     canvas_tabela.configure(yscrollcommand=scrollbar_tabela.set)
 
-    btn_adicionar_linha = tk.Button(frame_botoes, text="Adicionar Linha", width=20, command=lambda: adicionar_linha())
-    btn_adicionar_linha.grid(row=2, column=0, pady=10)
+    # Criando botões laterais
+    btn_cadastrar_materia = tk.Button(frame_botoes, text="Cadastrar Matéria", width=20, command=lambda: abrir_cadastro_notas(element))
+    btn_cadastrar_materia.pack(pady=10)
 
-    # Botão para salvar alterações
+    btn_adicionar_linha = tk.Button(frame_botoes, text="Adicionar Linha", width=20, command=lambda: adicionar_linha())
+    btn_adicionar_linha.pack(pady=10)
+
     btn_salvar = tk.Button(frame_botoes, text="Salvar Alterações", width=20, command=lambda: salvar())
-    btn_salvar.grid(row=3, column=0, pady=10)
+    btn_salvar.pack(pady=10)
 
     # Cabeçalhos da tabela
-    titulos = ["Matéria", "Período", "n1", "n2", "n3", "n4", "Média", ""]
+    titulos = ["Matéria", "Período", "n1", "n2", "n3", "n4"]
     for col, titulo in enumerate(titulos):
         tk.Label(frame_conteudo_tabela, text=titulo, font=("Arial", 10, "bold"), padx=5, pady=5).grid(row=0, column=col)
 
@@ -63,67 +65,30 @@ def exibir_tela(element):
 
     """------------------------GERENCIAMENTO DA TABELA-----------------------------------"""
 
-    # Função para calcular a média das notas
-    def calcular_media(*notas):
-        total = sum(notas)
-        return total / len(notas) if len(notas) > 0 else 0
-
-    # Função para excluir uma linha
-    def excluir_linha(row):
-        for widget in row:
-            widget.destroy()
-        salvar()
-
     def abrir_cadastro_notas(tela_atual):
-        abrir_nova_tela(tela_atual, "cadastro_materias_tela.py", False)
+        abrir_nova_tela(tela_atual,"cadastro_materias_tela.py",False)
 
     # Função para adicionar uma linha à tabela
     def adicionar_linha():
         row = len(frame_conteudo_tabela.winfo_children()) // len(titulos) + 1
 
         cmb_materia = tk.StringVar(value=" ")
+        cmb_periodo = tk.StringVar(value=" ")
+
         menu_materia = tk.OptionMenu(frame_conteudo_tabela, cmb_materia, *materias)
         menu_materia.config(width=16)
         menu_materia.grid(row=row, column=0, padx=5, pady=5)
 
-        # Obtendo o período da matéria selecionada
-        def atualizar_periodo(*args):
-            materia = cmb_materia.get()
-            if materia:
-                dados_materia = acessar_bd("r", f"data/materias/{materia}.json")
-                periodo = dados_materia.get("Período", " ")
-                lbl_periodo.config(text=periodo)
+        menu_periodo = tk.OptionMenu(frame_conteudo_tabela, cmb_periodo, *semestres)
+        menu_periodo.config(width=5)
+        menu_periodo.grid(row=row, column=1, padx=5, pady=5)
 
-        cmb_materia.trace("w", atualizar_periodo)
-
-        lbl_periodo = tk.Label(frame_conteudo_tabela, text=" ")
-        lbl_periodo.grid(row=row, column=1, padx=5, pady=5)
-
-        entries = []
         for col in range(2, 6):
-            entry = tk.Entry(frame_conteudo_tabela, width=5)
-            entry.grid(row=row, column=col, padx=5, pady=5)
-            entries.append(entry)
-
-        # Calculando a média
-        def atualizar_media():
-            notas = [int(entry.get() or 0) for entry in entries]
-            media = calcular_media(*notas)
-            label_media.config(text=f'{media:.2f}')
-
-        for entry in entries:
-            entry.bind("<KeyRelease>", lambda event: atualizar_media())
-
-        # Label para exibir a média
-        label_media = tk.Label(frame_conteudo_tabela, text="0.00")
-        label_media.grid(row=row, column=6, padx=5, pady=5)
-
-        # Botão para excluir a linha
-        btn_excluir = tk.Button(frame_conteudo_tabela, text="Excluir", command=lambda r=row: excluir_linha(frame_conteudo_tabela.grid_slaves(row=r)))
-        btn_excluir.grid(row=row, column=7, padx=5, pady=5)
+            tk.Entry(frame_conteudo_tabela, width=5).grid(row=row, column=col, padx=5, pady=5)
 
         frame_conteudo_tabela.update_idletasks()
         canvas_tabela.configure(scrollregion=canvas_tabela.bbox("all"))
+
 
     def salvar():
         dados = []  # Lista para armazenar múltiplas linhas
@@ -131,8 +96,8 @@ def exibir_tela(element):
         widgets = frame_conteudo_tabela.winfo_children()
         print(widgets)
 
-        # Cabeçalhos da tabela
-        titulos = ["Matéria", "Período", "n1", "n2", "n3", "n4", "Média", ""]  # Ajuste conforme sua tabela
+        # Mapear colunas pelos títulos
+        titulos = ["Matéria", "Período", "n1", "n2", "n3", "n4"]  # Ajuste conforme sua tabela
 
         # Dicionário temporário para armazenar uma linha completa
         dados_por_linha = {}
@@ -158,21 +123,22 @@ def exibir_tela(element):
 
             if isinstance(widget, tk.OptionMenu):
                 var_name = widget.cget("textvariable")
-                valor = widget.getvar(var_name)
+                valor = widget.getvar(var_name).strip()
+
+                if valor == "":
+                    Messagebox.ok("Os campos de matéria e período não podem estar vazios!")
+                    return
 
             elif isinstance(widget, tk.Entry):
                 valor = widget.get().strip()
-
-            elif isinstance(widget, tk.Label):
-                valor = widget.cget("text").strip()
 
             else:
                 continue
 
             # Converter valores numéricos
-            if coluna_nome == "Período" or coluna_nome.startswith("n"):
+            if coluna_nome == "Período" or coluna_nome.startswith("N"):
                 try:
-                    valor = int(valor)
+                    valor = valor
                 except ValueError:
                     valor = 0  # Caso esteja vazio ou inválido
 
@@ -205,32 +171,22 @@ def exibir_tela(element):
         # Preencher as linhas com os dados carregados e ordenados
         for row, dado in enumerate(dados_ordenados, start=1):
             cmb_materia = tk.StringVar(value=dado.get("Matéria", ""))
-            lbl_periodo = tk.Label(frame_conteudo_tabela, text=dado.get("Período", ""))
+            cmb_periodo = tk.StringVar(value=dado.get("Período", ""))
 
             menu_materia = tk.OptionMenu(frame_conteudo_tabela, cmb_materia, *materias)
             menu_materia.config(width=16)
             menu_materia.grid(row=row, column=0, padx=5, pady=5)
 
-            lbl_periodo.grid(row=row, column=1, padx=5, pady=5)
+            menu_periodo = tk.OptionMenu(frame_conteudo_tabela, cmb_periodo, *semestres)
+            menu_periodo.config(width=5)
+            menu_periodo.grid(row=row, column=1, padx=5, pady=5)
 
-            entries = []
-            for col, titulo in enumerate(titulos[2:6], start=2):  # Começa a preencher as notas
-                entry = tk.Entry(frame_conteudo_tabela, width=5, textvariable=tk.StringVar(value=dado[titulo.lower()]))
-                entry.grid(row=row, column=col, padx=5, pady=5)
-                entries.append(entry)
-
-            # Calculando a média
-            notas = [int(entry.get() or 0) for entry in entries]
-            media = calcular_media(*notas)
-            label_media = tk.Label(frame_conteudo_tabela, text=f'{media:.2f}')
-            label_media.grid(row=row, column=6, padx=5, pady=5)
-
-            # Botão para excluir a linha
-            btn_excluir = tk.Button(frame_conteudo_tabela, text="Excluir", command=lambda r=row: excluir_linha(frame_conteudo_tabela.grid_slaves(row=r)))
-            btn_excluir.grid(row=row, column=7, padx=5, pady=5)
+            for col, titulo in enumerate(titulos[2:], start=2):  # Começa a preencher as notas
+                tk.Entry(frame_conteudo_tabela, width=5, textvariable=tk.StringVar(value=dado[titulo.lower()])).grid(row=row, column=col, padx=5, pady=5)
 
         frame_conteudo_tabela.update_idletasks()
         canvas_tabela.configure(scrollregion=canvas_tabela.bbox("all"))
+
 
     # Esconder botão de salvar alterações
     mostrar_botao_salvar()
@@ -240,6 +196,9 @@ def exibir_tela(element):
 
     # Carregar os dados e preencher a tabela ao iniciar a interface
     preencher_tabela()
+
+    # Vinculando a função on_close ao evento de fechar a janela
+    # element.protocol("WM_DELETE_WINDOW", lambda: on_close(element))  # Chamando a função on_close
 
     # Rodando a interface
     element.mainloop()
