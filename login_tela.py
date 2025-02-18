@@ -29,7 +29,7 @@ def verificar_login(usuario_var, senha_var, remember_var, mensagem_var, mensagem
     usuario = usuario_var.get()
     senha = senha_var.get()
 
-    if login_usuario(usuario,senha):
+    if login_usuario(usuario,senha) == True:
         set_mensagem("Login bem-sucedido!", "success", mensagem_var, mensagem_label)
         if remember_var.get():
             salvar_login(usuario, senha)
